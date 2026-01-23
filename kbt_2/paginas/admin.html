@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="pt-br" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel Admin — Crossfit</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+
+<body class="tema-claro">
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar__conteudo">
+        <div class="brand">
+          <div class="brand__icone">
+            <span class="material-symbols-outlined">fitness_center</span>
+          </div>
+          <div class="brand__texto">
+            <h1 class="brand__titulo">Crossfit Admin</h1>
+            <p class="brand__subtitulo">Experimental System</p>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <a class="menu__item" href="#"><span class="material-symbols-outlined">dashboard</span><span>Dashboard</span></a>
+          <a class="menu__item menu__item--ativo" href="#"><span class="material-symbols-outlined">assignment</span><span>Submissions</span></a>
+          <a class="menu__item" href="#"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
+          <a class="menu__item" href="#"><span class="material-symbols-outlined">calendar_today</span><span>Schedule</span></a>
+
+          <div class="menu__rodape">
+            <a class="menu__item" href="#"><span class="material-symbols-outlined">settings</span><span>Settings</span></a>
+
+            <button id="btnSair" class="menu__item menu__item--botao" type="button">
+              <span class="material-symbols-outlined">logout</span><span>Sair</span>
+            </button>
+
+            <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar__esquerda">
+          <h2 class="topbar__titulo">Assign Students</h2>
+
+          <div class="busca">
+            <span class="material-symbols-outlined busca__icone">search</span>
+            <input id="busca" class="busca__input" type="search" placeholder="Buscar pelo nome..." />
+          </div>
+        </div>
+
+        <div class="topbar__direita">
+          <button class="icon-btn" type="button" aria-label="Notificações">
+            <span class="material-symbols-outlined">notifications</span>
+          </button>
+          <button class="icon-btn" type="button" aria-label="Mensagens">
+            <span class="material-symbols-outlined">chat_bubble</span>
+          </button>
+          <div class="separador-vertical"></div>
+          <div class="avatar" title="Admin"></div>
+        </div>
+      </header>
+
+      <section class="conteudo">
+        <div class="stats">
+          <article class="stat-card">
+            <div class="stat-card__topo">
+              <p class="stat-card__label">Pending Assignments</p>
+              <span class="material-symbols-outlined stat-card__icone">pending_actions</span>
+            </div>
+            <div class="stat-card__valor">
+              <span id="statPendentes" class="stat-card__numero">—</span>
+              <span class="stat-card__chip stat-card__chip--ok">—</span>
+            </div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__topo">
+              <p class="stat-card__label">Active Coaches</p>
+              <span class="material-symbols-outlined stat-card__icone">sports_martial_arts</span>
+            </div>
+            <div class="stat-card__valor">
+              <span id="statProfessores" class="stat-card__numero">—</span>
+              <span class="stat-card__chip stat-card__chip--alerta">—</span>
+            </div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__topo">
+              <p class="stat-card__label">Daily Submissions</p>
+              <span class="material-symbols-outlined stat-card__icone">description</span>
+            </div>
+            <div class="stat-card__valor">
+              <span id="statHoje" class="stat-card__numero">—</span>
+              <span class="stat-card__chip stat-card__chip--ok">—</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="secao-topo">
+          <h3 class="secao-titulo">New Submissions</h3>
+
+          <div class="secao-acoes">
+            <label class="filtro">
+              <span>Status</span>
+              <select id="filtroStatus" class="filtro__select">
+                <option value="todos">Todos</option>
+                <option value="pendente">Pendente</option>
+                <option value="atribuido">Atribuído</option>
+                <option value="confirmado">Confirmado</option>
+                <option value="faltou">Faltou</option>
+              </select>
+            </label>
+
+            <label class="filtro">
+              <span>Professor</span>
+              <select id="filtroProfessor" class="filtro__select">
+                <option value="todos">Todos</option>
+              </select>
+            </label>
+
+            <button id="btnAtualizar" class="btn btn--primario" type="button">
+              <span class="material-symbols-outlined">sync</span>
+              Atualizar
+            </button>
+          </div>
+        </div>
+
+        <section class="tabela-card">
+          <div class="tabela-scroll">
+            <table class="tabela">
+              <thead>
+                <tr>
+                  <th>Aluno</th>
+                  <th>Tipo de Aula</th>
+                  <th>Data</th>
+                  <th>Status</th>
+                  <th>Atribuir Professor</th>
+                  <th class="tabela__acao">Ação</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaAgendamentosAdmin">
+                <tr><td colspan="6" class="tabela__vazio">Nenhum agendamento carregado.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <footer class="tabela-rodape">
+            <p id="paginacaoInfo" class="tabela-rodape__texto">—</p>
+            <div class="tabela-rodape__botoes">
+              <button id="btnPagAnterior" class="icon-btn icon-btn--borda" type="button">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <button id="btnPagProxima" class="icon-btn icon-btn--borda" type="button">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </footer>
+        </section>
+
+        <div class="barra-acoes">
+          <button id="btnDescartar" class="btn btn--secundario" type="button">Descartar alterações</button>
+          <button id="btnSalvarTudo" class="btn btn--primario" type="button">Salvar atribuições</button>
+        </div>
+
+        <p id="msgAdmin" class="mensagem" hidden></p>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="../js/guardas.js"></script>
+  <script type="module" src="../js/admin.lista.js"></script>
+  <script type="module" src="../js/admin.atribuicao.js"></script>
+</body>
+</html>

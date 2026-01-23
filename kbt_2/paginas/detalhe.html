@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="pt-br" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Detalhe da Aula — Crossfit</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/detalhe.css" />
+</head>
+
+<body>
+  <header class="topbar-det">
+    <div class="topbar-det__esquerda">
+      <a href="#" id="btnVoltar" class="link-voltar">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Voltar
+      </a>
+
+      <div class="marca">
+        <div class="marca__icone">
+          <span class="material-symbols-outlined">fitness_center</span>
+        </div>
+        <h2 class="marca__titulo">Aula Experimental</h2>
+      </div>
+    </div>
+
+    <div class="topbar-det__direita">
+      <span id="badgeStatus" class="status-pill">—</span>
+    </div>
+  </header>
+
+  <main class="pagina-det">
+    <div class="pagina-det__conteudo">
+      <section class="hero">
+        <div class="hero__foto">
+          <span class="hero__icone material-symbols-outlined">person</span>
+        </div>
+
+        <div class="hero__info">
+          <h1 id="detAluno" class="hero__nome">—</h1>
+          <p id="subtitulo" class="hero__sub">—</p>
+
+          <div class="hero__grid">
+            <div class="mini-card">
+              <p class="mini-card__label">Data</p>
+              <p id="detData" class="mini-card__valor">—</p>
+            </div>
+            <div class="mini-card">
+              <p class="mini-card__label">Tipo</p>
+              <p id="detTipo" class="mini-card__valor">—</p>
+            </div>
+            <div class="mini-card">
+              <p class="mini-card__label">WhatsApp</p>
+              <p id="detWhatsapp" class="mini-card__valor">—</p>
+            </div>
+            <div class="mini-card">
+              <p class="mini-card__label">Status</p>
+              <p id="detStatus" class="mini-card__valor">—</p>
+            </div>
+          </div>
+
+          <div class="acoes">
+            <a id="btnWhatsapp" class="btn btn--primario" href="#" target="_blank" rel="noopener">
+              <span class="material-symbols-outlined">chat</span>
+              Chamar no WhatsApp
+            </a>
+
+            <button id="btnConfirmar" class="btn btn--ok" type="button">
+              <span class="material-symbols-outlined">check_circle</span>
+              Confirmar presença
+            </button>
+
+            <button id="btnFaltou" class="btn btn--erro" type="button">
+              <span class="material-symbols-outlined">cancel</span>
+              Marcar falta
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card__topo">
+          <h2 class="card__titulo">Informações do Forms</h2>
+          <p class="card__subtitulo">Aqui aparecem todas as respostas do aluno.</p>
+        </div>
+
+        <div id="detFormRaw" class="lista-detalhes">
+          <p class="vazio">Carregando informações…</p>
+        </div>
+      </section>
+
+      <section class="mensagens">
+        <p id="msgErro" class="msg msg--erro" role="alert" hidden></p>
+        <p id="msgOk" class="msg msg--ok" hidden></p>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="../js/guardas.js"></script>
+  <script type="module" src="../js/professor.detalhe.js"></script>
+</body>
+</html>

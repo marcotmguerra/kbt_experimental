@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="pt-br" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel do Professor — Crossfit</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/professor.css" />
+</head>
+
+<body>
+  <header class="topbar-prof">
+    <div class="topbar-prof__esquerda">
+      <div class="marca">
+        <div class="marca__icone">
+          <span class="material-symbols-outlined">fitness_center</span>
+        </div>
+        <h2 class="marca__titulo">Crossfit Hub</h2>
+      </div>
+
+      <div class="busca busca--desktop">
+        <span class="material-symbols-outlined busca__icone">search</span>
+        <input id="busca" class="busca__input" type="search" placeholder="Buscar alunos..." />
+      </div>
+    </div>
+
+    <div class="topbar-prof__direita">
+      <nav class="menu-topo">
+        <a class="menu-topo__link menu-topo__link--ativo" href="#">Dashboard</a>
+        <a class="menu-topo__link" href="#">Schedule</a>
+        <a class="menu-topo__link" href="#">Students</a>
+        <a class="menu-topo__link" href="#">Reports</a>
+      </nav>
+
+      <button class="icon-btn" type="button" aria-label="Notificações">
+        <span class="material-symbols-outlined">notifications</span>
+      </button>
+
+      <div class="avatar" title="Professor"></div>
+
+      <button id="btnSair" class="btn-sair" type="button">
+        <span class="material-symbols-outlined">logout</span>
+        <span>Sair</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="pagina-prof">
+    <div class="pagina-prof__conteudo">
+      <section class="cabecalho-prof">
+        <div class="cabecalho-prof__texto">
+          <h1 id="tituloProfessor" class="cabecalho-prof__titulo">Olá, Professor(a)</h1>
+          <p id="subtituloProfessor" class="cabecalho-prof__subtitulo">Você tem — aulas experimentais para hoje.</p>
+          <p id="usuarioProfessor" class="cabecalho-prof__usuario">Usuário: —</p>
+        </div>
+
+        <div class="cabecalho-prof__acoes">
+          <label class="filtro">
+            <span>Status</span>
+            <select id="filtroStatus" class="filtro__select">
+              <option value="todos">Todos</option>
+              <option value="atribuido">Atribuído</option>
+              <option value="confirmado">Confirmado</option>
+              <option value="faltou">Faltou</option>
+            </select>
+          </label>
+
+          <button id="btnAtualizar" class="btn btn--primario" type="button">
+            <span class="material-symbols-outlined">sync</span>
+            Atualizar
+          </button>
+        </div>
+      </section>
+
+      <section class="abas">
+        <button class="aba aba--ativa" type="button">Hoje</button>
+        <button class="aba" type="button">Esta semana</button>
+        <button class="aba" type="button">Próximas</button>
+        <button class="aba" type="button">Passadas</button>
+      </section>
+
+      <section>
+        <div id="gradeAulasProfessor" class="grade-cards">
+          <p class="vazio">Nenhuma aula carregada.</p>
+        </div>
+      </section>
+
+      <p id="msgProfessor" class="mensagem" hidden></p>
+    </div>
+  </main>
+
+  <nav class="nav-mobile">
+    <a class="nav-mobile__item nav-mobile__item--ativo" href="#">
+      <span class="material-symbols-outlined">dashboard</span><span>Dash</span>
+    </a>
+    <a class="nav-mobile__item" href="#">
+      <span class="material-symbols-outlined">calendar_month</span><span>Agenda</span>
+    </a>
+    <a class="nav-mobile__item" href="#">
+      <span class="material-symbols-outlined">group</span><span>Alunos</span>
+    </a>
+    <a class="nav-mobile__item" href="#">
+      <span class="material-symbols-outlined">settings</span><span>Config</span>
+    </a>
+  </nav>
+
+  <script type="module" src="../js/guardas.js"></script>
+  <script type="module" src="../js/professor.painel.js"></script>
+</body>
+</html>

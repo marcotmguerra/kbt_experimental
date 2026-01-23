@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-br" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login — Sistema</title>
+
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="../css/base.css" />
+</head>
+
+<body class="centralizado">
+  <main class="card">
+    <header style="margin-bottom: 14px;">
+      <h1 style="margin:0; font-weight:900;">Sistema de Aulas</h1>
+      <p style="margin:6px 0 0; color: rgba(0,0,0,.6);">Login de professor e administrador</p>
+    </header>
+
+    <form id="formLogin" autocomplete="on">
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" required placeholder="seuemail@exemplo.com" />
+
+      <label for="senha">Senha</label>
+      <input id="senha" name="senha" type="password" required placeholder="••••••••" />
+
+      <button id="btnEntrar" type="submit" style="margin-top: 14px;">Entrar</button>
+
+      <p id="msgCarregando" hidden style="margin-top:10px;">Entrando…</p>
+      <p id="msgErro" role="alert" hidden style="margin-top:10px; color:#b91c1c; font-weight:700;"></p>
+    </form>
+  </main>
+
+  <script type="module" src="../js/autenticacao.js"></script>
+</body>
+</html>

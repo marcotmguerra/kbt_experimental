@@ -1,0 +1,81 @@
+/* /public/css/base.css */
+
+/* RESET simples */
+*{ box-sizing: border-box; }
+html, body{ height: 100%; }
+body{ margin: 0; }
+
+/* centralizar tela (login) */
+.centralizado{
+  min-height: 100vh;          /* pega toda altura da tela */
+  display: flex;              /* liga flexbox */
+  align-items: center;        /* centraliza vertical */
+  justify-content: center;    /* centraliza horizontal */
+  padding: 24px;
+}
+
+/* card genérico */
+.card{
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.08);
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* inputs */
+label{
+  display: block;
+  margin: 12px 0 6px;
+  font-weight: 800;
+  font-size: 12px;
+  color: rgba(0,0,0,.65);
+}
+
+input, select{
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.14);
+  outline: none;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+input:focus, select:focus{
+  border-color: #137fec;                /* muda a cor da borda no foco */
+  box-shadow: 0 0 0 4px rgba(19,127,236,.15);
+}
+
+/* botão padrão */
+button{
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  border-radius: 12px;
+  background: #137fec;   /* muda cor do botão aqui */
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+  transition: filter .12s ease, transform .12s ease;
+}
+
+button:hover{
+  filter: brightness(.92);  /* < 1 escurece */
+  transform: translateY(-1px);
+}
+
+button:active{
+  transform: translateY(0);
+  filter: brightness(.88);
+}
+
+button:disabled{
+  opacity: .6;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
