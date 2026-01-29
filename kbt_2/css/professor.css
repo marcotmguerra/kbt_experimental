@@ -78,8 +78,8 @@ body{ margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto,
   
 }
 
-.cabecalho-prof{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:14px; margin:8px 0; }
-.cabecalho-prof__titulo{ margin:0; font-size:clamp(28px, 4vw, 52px); font-weight:900; letter-spacing:-0.03em; }
+.cabecalho-prof{ display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:10x; margin:8px 0; }
+.cabecalho-prof__titulo{ margin:0; font-size:clamp(28px, 4vw, 40px); font-weight:900; letter-spacing:-0.03em; }
 .cabecalho-prof__subtitulo{ margin:6px 0 0; color:var(--texto-fraco); font-size:16px; font-weight:700; }
 .cabecalho-prof__usuario{ margin:10px 0 0; font-size:12px; color:var(--texto-fraco); }
 
@@ -137,12 +137,18 @@ body{ margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto,
 .card-aula__nome{ margin:0 0 6px; font-size:18px; font-weight:900; }
 .card-aula__linha{ display:flex; align-items:center; gap:8px; color:var(--texto-fraco); font-weight:800; font-size:13px; margin-bottom:10px; }
 .card-aula__tag{
-  display:inline-flex; align-items:center; gap:8px;
-  padding:8px 10px; border-radius:14px;
-  background: rgba(19,127,236,.10);
+  display:inline-flex; 
+  align-items:center; 
+  gap:8px;
+  padding:8px 10px; 
+  border-radius:14px;
+  background: rgba(255, 251, 33, 0.404);
   color: var(--primario);
-  font-weight:900; font-size:11px; letter-spacing:.06em;
-  text-transform:uppercase; width:fit-content;
+  font-weight:900; 
+  font-size:11px; 
+  letter-spacing:.06em;
+  text-transform:uppercase; 
+  width:fit-content;
 }
 .card-aula__link{
   margin-top:12px; display:inline-flex; align-items:center; gap:8px;

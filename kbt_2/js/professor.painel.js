@@ -3,145 +3,194 @@ import { supabase } from "./supabaseCliente.js";
 import { formatarDataBR } from "./util.js";
 
 let cache = [];
+let abaAtiva = "Hoje"; // Define a aba inicial
 
-function classeStatus(status){
-  if (status === "confirmado") return "card-aula__status--confirmado";
-  if (status === "faltou") return "card-aula__status--faltou";
-  if (status === "atribuido") return "card-aula__status--atribuido";
-  return "card-aula__status--pendente";
+async function garantirPerfil(user) {
+  let { data: perfil } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (!perfil) {
+    const { data: novoPerfil } = await supabase
+      .from("profiles")
+      .insert([{ id: user.id, nome: user.email.split("@")[0], role: "professor", ativo: true }])
+      .select().single();
+    perfil = novoPerfil;
+  }
+  window.__perfil = perfil;
+  return perfil;
 }
 
-function textoStatus(status){
-  if (status === "confirmado") return "Confirmed";
-  if (status === "faltou") return "No Show";
-  if (status === "atribuido") return "Assigned";
-  return "Pending";
+// --- FUNÇÃO PARA OS EMOJIS POR TIPO ---
+
+function obterEmojiTipo(tipo) {
+  const t = (tipo || "").toLowerCase();
+  
+  if (t.includes("experimental") || t.includes("teste"))
+  return '<span class="material-symbols-outlined">add_reaction</span>';
+
+if (t.includes("crossfit"))
+  return '<span class="material-symbols-outlined">fitness_center</span>';
+
+if (t.includes("strong"))
+  return '<span class="material-symbols-outlined">exercise</span>';
+
+if (t.includes("kids") || t.includes("peso"))
+  return '<span class="material-symbols-outlined">child_hat</span>';
+
+if (t.includes("cardio") || t.includes("yoga"))
+  return '<span class="material-symbols-outlined">mode_heat</span>';
+
+if (t.includes("hirox"))
+  return '<span class="material-symbols-outlined">sprint</span>';
+
+  
+  return "⚡"; // Emoji padrão se não encontrar nenhum
 }
 
-function criarCard(ag){
+// Lógica de filtragem por data para as abas
+function filtrarPorData(lista, aba) {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  const fimDaSemana = new Date(hoje);
+  fimDaSemana.setDate(hoje.getDate() + 7);
+
+  return lista.filter(ag => {
+    const dataAula = new Date(ag.data_aula);
+    dataAula.setHours(0, 0, 0, 0);
+
+    if (aba === "Hoje") {
+      return dataAula.getTime() === hoje.getTime();
+    } else if (aba === "Esta semana") {
+      return dataAula >= hoje && dataAula <= fimDaSemana;
+    } else if (aba === "Próximas") {
+      return dataAula > hoje;
+    } else if (aba === "Passadas") {
+      return dataAula < hoje;
+    }
+    return true;
+  });
+}
+
+function aplicarFiltros(lista) {
+  const filtroStatus = document.getElementById("filtroStatus")?.value || "todos";
+  const busca = (document.getElementById("busca")?.value || "").toLowerCase().trim();
+
+  // 1. Filtra pela aba selecionada (Data)
+  let filtrados = filtrarPorData(lista, abaAtiva);
+
+  // 2. Filtra pelo status selecionado
+  if (filtroStatus !== "todos") {
+    filtrados = filtrados.filter(ag => ag.status === filtroStatus);
+  }
+
+  // 3. Filtra pela busca de nome
+  if (busca) {
+    filtrados = filtrados.filter(ag => (ag.aluno_nome || "").toLowerCase().includes(busca));
+  }
+
+  return filtrados;
+}
+
+function criarCard(ag) {
   const card = document.createElement("article");
   card.className = "card-aula";
+  
+  // Lógica de Status
+  const statusTraduzido = {
+    confirmado: { classe: "confirmado", texto: "Confirmado" },
+    faltou: { classe: "faltou", texto: "Faltou" },
+    atribuido: { classe: "atribuido", texto: "Atribuído" },
+    pendente: { classe: "pendente", texto: "Pendente" }
+  };
+  
+  const status = statusTraduzido[ag.status] || statusTraduzido.pendente;
 
-  const statusClass = classeStatus(ag.status);
-  const statusTxt = textoStatus(ag.status);
+  // Lógica de Emoji
+  const emoji = obterEmojiTipo(ag.tipo_aula);
 
   card.innerHTML = `
-    <div class="card-aula__foto">
-      <span class="card-aula__status ${statusClass}">${statusTxt}</span>
+    <!-- Badge de Status -->
+    <div style="display: flex; justify-content: flex-end; margin-bottom: -10px;">
+        <span class="card-aula__status card-aula__status--${status.classe}" style="position: static; font-size: 10px;">
+            ${status.texto}
+        </span>
     </div>
 
     <h3 class="card-aula__nome">${ag.aluno_nome || "Sem nome"}</h3>
-
+    
     <div class="card-aula__linha">
-      <span class="material-symbols-outlined" style="font-size:18px;">schedule</span>
+      <span class="material-symbols-outlined">schedule</span>
       <span>${formatarDataBR(ag.data_aula)}</span>
     </div>
 
     <div class="card-aula__tag">
-      <span class="material-symbols-outlined" style="font-size:18px;">bolt</span>
-      <span>${ag.tipo_aula || "Aula"}</span>
+      <span style="margin-right: 4px;">${emoji}</span>
+      <span>${ag.tipo_aula || "Experimental"}</span>
     </div>
 
     <a class="card-aula__link" href="../paginas/detalhe.html?id=${ag.id}">
-      Abrir detalhes
-      <span class="material-symbols-outlined" style="font-size:18px;">arrow_forward</span>
+      Detalhes <span class="material-symbols-outlined">arrow_forward</span>
     </a>
   `;
   return card;
 }
 
-function aplicarFiltros(lista){
-  const filtroStatus = document.getElementById("filtroStatus")?.value || "todos";
-  const busca = (document.getElementById("busca")?.value || "").toLowerCase().trim();
-
-  return lista.filter((ag) => {
-    if (filtroStatus !== "todos" && ag.status !== filtroStatus) return false;
-    if (busca && !(ag.aluno_nome || "").toLowerCase().includes(busca)) return false;
-    return true;
-  });
-}
-
-function contarHoje(lista){
-  const hoje = new Date();
-  const ini = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 0,0,0);
-  const fim = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 23,59,59);
-
-  return lista.filter(a => {
-    const dt = new Date(a.data_aula);
-    return dt >= ini && dt <= fim;
-  }).length;
-}
-
-async function carregarMinhasAulas(){
-  const container = document.getElementById("gradeAulasProfessor");
-  if (!container) return;
-
-  container.innerHTML = `<p class="vazio">Carregando…</p>`;
-
-  const { data: sessao } = await supabase.auth.getSession();
-  const user = sessao?.session?.user;
-
-  if (!user) {
-    window.location.href = "../paginas/login.html";
-    return;
-  }
-
-  const { data, error } = await supabase
-    .from("agendamentos")
-    .select("id, aluno_nome, aluno_whatsapp, data_aula, tipo_aula, status, professor_id")
-    .eq("professor_id", user.id)
-    .order("data_aula", { ascending: true });
-
-  if (error) {
-    container.innerHTML = `<p class="vazio">Erro ao carregar.</p>`;
-    return;
-  }
-
-  cache = data || [];
-  renderizar();
-
-  const totalHoje = contarHoje(cache);
-  const nome = window.__perfil?.nome || "Professor(a)";
-  const titulo = document.getElementById("tituloProfessor");
-  const subtitulo = document.getElementById("subtituloProfessor");
-  if (titulo) titulo.textContent = `Olá, ${nome}`;
-  if (subtitulo) subtitulo.textContent = `Você tem ${totalHoje} aulas experimentais para hoje.`;
-}
-
-function renderizar(){
+function renderizar() {
   const container = document.getElementById("gradeAulasProfessor");
   if (!container) return;
 
   const filtrados = aplicarFiltros(cache);
+  container.innerHTML = "";
 
-  if (!filtrados.length) {
-    container.innerHTML = `<p class="vazio">Nenhuma aula encontrada.</p>`;
+  if (filtrados.length === 0) {
+    container.innerHTML = `<p class="vazio">Nenhuma aula encontrada para "${abaAtiva}".</p>`;
     return;
   }
 
-  container.innerHTML = "";
-  filtrados.forEach((ag) => container.appendChild(criarCard(ag)));
+  filtrados.forEach(ag => container.appendChild(criarCard(ag)));
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
-  if (!document.getElementById("gradeAulasProfessor")) return;
+async function carregarMinhasAulas() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) { window.location.href = "login.html"; return; }
 
-  await carregarMinhasAulas();
+  const perfil = await garantirPerfil(session.user);
+  const { data, error } = await supabase
+    .from("agendamentos")
+    .select("*")
+    .eq("professor_id", session.user.id)
+    .order("data_aula", { ascending: true });
 
-  ["filtroStatus", "busca"].forEach((id) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.addEventListener("input", renderizar);
-    el.addEventListener("change", renderizar);
-  });
+  if (!error) {
+    cache = data || [];
+    renderizar();
+    
+    // Atualiza subtitulo com contagem de hoje
+    const hojeCount = filtrarPorData(cache, "Hoje").length;
+    document.getElementById("tituloProfessor").textContent = `Olá, ${perfil.nome}`;
+    document.getElementById("subtituloProfessor").textContent = `Você tem ${hojeCount} aulas para hoje.`;
+  }
+}
 
-  const btnAtualizar = document.getElementById("btnAtualizar");
-  if (btnAtualizar) btnAtualizar.addEventListener("click", carregarMinhasAulas);
+// Configuração dos eventos
+document.addEventListener("DOMContentLoaded", () => {
+  carregarMinhasAulas();
 
+  // Evento para as ABAS
   document.querySelectorAll(".aba").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".aba").forEach(b => b.classList.remove("aba--ativa"));
       btn.classList.add("aba--ativa");
+      abaAtiva = btn.textContent.trim();
+      renderizar();
     });
   });
+
+  document.getElementById("filtroStatus")?.addEventListener("change", renderizar);
+  document.getElementById("busca")?.addEventListener("input", renderizar);
+  document.getElementById("btnAtualizar")?.addEventListener("click", carregarMinhasAulas);
 });
