@@ -30,3 +30,8 @@ export function linkWhatsApp(telefone, mensagem = "") {
 export function getQueryParam(nome) {
   return new URLSearchParams(window.location.search).get(nome);
 }
+
+// Funções que faltavam para o autenticacao.js
+export function mostrar(el) { if (el) el.style.display = "block"; }
+export function esconder(el) { if (el) el.style.display = "none"; }
+export function setTexto(el, txt) { if (el) el.textContent = txt; }

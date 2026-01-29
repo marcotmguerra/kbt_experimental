@@ -94,28 +94,27 @@
   </div>
 
   <!-- Modal de Cadastro -->
-  <div id="modalCoach" class="modal">
-    <div class="modal__conteudo">
-      <h3 class="modal__titulo">Cadastrar Novo Coach</h3>
-      <p style="font-size: 13px; color: var(--texto-fraco); margin-bottom: 15px;">
-        Nota: O coach deve usar o email cadastrado para fazer login no sistema.
-      </p>
-      <form id="formNovoCoach">
-        <label>Nome do Coach</label>
-        <input type="text" id="nomeCoach" required placeholder="Ex: Coach João">
-        
-        <label>E-mail (Login)</label>
-        <input type="email" id="emailCoach" required placeholder="coach@crossfit.com">
+  <!-- Procure a div id="modalCoach" e substitua por esta -->
+<<!-- Substitua o conteúdo do modalCoach pelo código abaixo -->
+<div id="modalCoach" class="modal">
+  <div class="modal__conteudo">
+    <h3 class="modal__titulo">Convidar Professor</h3>
+    <p style="font-size: 13px; color: var(--texto-fraco); margin-bottom: 15px;">
+      O professor receberá um link por e-mail para acessar o sistema e completar o cadastro dele.
+    </p>
+    <form id="formNovoCoach">
+      <label>E-mail do Professor</label>
+      <input type="email" id="emailCoach" required placeholder="email@professor.com">
 
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-          <button type="button" id="btnFecharModal" class="btn btn--secundario" style="flex:1">Cancelar</button>
-          <button type="submit" class="btn btn--primario" style="flex:1">Salvar</button>
-        </div>
-      </form>
-    </div>
+      <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button type="button" id="btnFecharModal" class="btn btn--secundario" style="flex:1">Cancelar</button>
+        <button type="submit" class="btn btn--primario" style="flex:1">Enviar Convite</button>
+      </div>
+    </form>
   </div>
+</div>
 
   <script type="module" src="../js/guardas.js"></script>
-  <script type="module" src="../js/admin.coaches.js"></script>
+  <script type="module" src="../js/admin.coachs.js"></script>
 </body>
 </html>

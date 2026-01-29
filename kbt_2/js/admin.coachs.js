@@ -1,44 +1,73 @@
-// /public/js/admin.coaches.js
 import { supabase } from "./supabaseCliente.js";
 import { showToast } from "./util.js";
 
-async function listarCoaches() {
-  const { data, error } = await supabase.from("profiles").select("*").eq("role", "professor").order("nome");
-  if (error) return showToast("Erro ao carregar coaches", "erro");
+const modal = document.getElementById("modalCoach");
+const btnAbrir = document.getElementById("btnAbrirModal");
+const btnFechar = document.getElementById("btnFecharModal");
+const form = document.getElementById("formNovoCoach");
+const lista = document.getElementById("listaCoaches");
+
+// Abrir/Fechar Modal
+btnAbrir?.addEventListener("click", () => modal.classList.add("modal--aberto"));
+btnFechar?.addEventListener("click", () => modal.classList.remove("modal--aberto"));
+
+// FUNÇÃO: Listar Coaches que já existem no banco
+async function carregarCoaches() {
+  if (!lista) return;
+  
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("role", "professor")
+    .order("nome");
+
+  if (error) {
+    console.error("Erro ao carregar:", error);
+    return;
+  }
 
   document.getElementById("totalCoaches").textContent = data.length;
-  const lista = document.getElementById("listaCoaches");
-  lista.innerHTML = data.map(c => `
+
+  lista.innerHTML = data.map(p => `
     <tr>
-      <td><strong>${c.nome}</strong></td>
-      <td><span class="badge ${c.ativo ? 'badge--ok' : 'badge--erro'}">${c.ativo ? 'Ativo' : 'Inativo'}</span></td>
+      <td><strong>${p.nome}</strong></td>
+      <td><span class="pill">${p.ativo ? 'Ativo' : 'Inativo'}</span></td>
       <td class="tabela__acao">
-        <button class="btn-confirmar" style="color:#ef4444" onclick="window._removerCoach('${c.id}')">Remover</button>
+         <button class="btn-excluir" onclick="window._deletarCoach('${p.id}')" style="color:red; background:none; border:none; cursor:pointer;">Remover</button>
       </td>
     </tr>
-  `).join("");
+  `).join('');
 }
 
-document.getElementById("formNovoCoach")?.addEventListener("submit", async (e) => {
+// FUNÇÃO: Enviar Link Mágico (Convite)
+form?.addEventListener("submit", async (e) => {
   e.preventDefault();
-  const nome = document.getElementById("nomeCoach").value;
-  // Nota: No Supabase Client, você não cria o USER, apenas o PROFILE aqui para teste.
-  // O ideal é criar o User no menu AUTH do Supabase.
-  const { error } = await supabase.from("profiles").insert([{ nome, role: 'professor' }]);
-  
-  if (error) showToast("Erro: Crie o usuário no menu AUTH do Supabase primeiro", "erro");
-  else {
-    showToast("Perfil de Coach criado!");
-    document.getElementById("modalCoach").classList.remove("modal--aberto");
-    listarCoaches();
+  const email = document.getElementById("emailCoach").value;
+
+  showToast("Enviando convite...");
+
+  const { error } = await supabase.auth.signInWithOtp({
+    email: email,
+    options: {
+      // O link levará o professor para o painel dele
+      emailRedirectTo: window.location.origin + '/paginas/professor.html',
+    },
+  });
+
+  if (error) {
+    showToast("Erro ao enviar: " + error.message, "erro");
+  } else {
+    showToast("E-mail de acesso enviado!");
+    modal.classList.remove("modal--aberto");
+    form.reset();
   }
 });
 
-window._removerCoach = async (id) => {
-  if (confirm("Remover este coach?")) {
+// Tornar a exclusão disponível
+window._deletarCoach = async (id) => {
+    if (!confirm("Remover este professor?")) return;
     await supabase.from("profiles").delete().eq("id", id);
-    listarCoaches();
-  }
+    carregarCoaches();
 };
 
-document.addEventListener("DOMContentLoaded", listarCoaches);
+document.addEventListener("DOMContentLoaded", carregarCoaches);
