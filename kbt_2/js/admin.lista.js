@@ -1,15 +1,57 @@
-// Fragmento para atualizar stats no admin.lista.js
-function atualizarStats(agendamentos) {
-  const total = agendamentos.length;
-  const confirmados = agendamentos.filter(a => a.status === 'confirmado').length;
-  const matriculados = agendamentos.filter(a => a.matriculado).length;
+import { supabase } from "./supabaseCliente.js";
+import { formatarDataBR } from "./util.js";
 
-  // Taxa de Conversão: Matriculados / Confirmados
-  const conversao = confirmados > 0 ? ((matriculados / confirmados) * 100).toFixed(0) : 0;
+async function inicializarPainel() {
+    const { data: agendamentos, error: errAg } = await supabase
+        .from("agendamentos")
+        .select("*, profiles(nome)")
+        .order("created_at", { ascending: false });
 
-  document.getElementById("statPendentes").textContent = agendamentos.filter(a => a.status === 'pendente').length;
-  document.getElementById("statProfessores").textContent = conversao + "%";
-  document.querySelector(".stat-card:nth-child(2) .stat-card__label").textContent = "Conversão (Vendas)";
-  document.getElementById("statHoje").textContent = matriculados;
-  document.querySelector(".stat-card:nth-child(3) .stat-card__label").textContent = "Total Matrículas";
+    const { data: professores, error: errProf } = await supabase
+        .from("profiles")
+        .select("id, nome")
+        .eq("role", "professor");
+
+    if (errAg) return;
+
+    atualizarStats(agendamentos);
+    renderizarTabelaAtribuicao(agendamentos, professores);
 }
+
+function atualizarStats(agendamentos = []) {
+    const confirmados = agendamentos.filter(a => a.status === "confirmado").length;
+    const matriculados = agendamentos.filter(a => a.matriculado).length;
+    const pendentes = agendamentos.filter(a => a.status === "pendente").length;
+    const hoje = new Date().toISOString().split('T')[0];
+    const inscricoesHoje = agendamentos.filter(a => a.created_at?.startsWith(hoje)).length;
+
+    document.getElementById("statPendentes").textContent = pendentes;
+    document.getElementById("statProfessores").textContent = confirmados > 0 ? Math.round((matriculados/confirmados)*100) + "%" : "0%";
+    document.getElementById("statHoje").textContent = inscricoesHoje;
+}
+
+function renderizarTabelaAtribuicao(agendamentos, professores) {
+    const lista = document.getElementById("listaAgendamentos");
+    if (!lista) return;
+
+    lista.innerHTML = agendamentos.map(ag => `
+        <tr>
+            <td><strong>${ag.aluno_nome}</strong></td>
+            <td>${ag.tipo_aula}</td>
+            <td>${formatarDataBR(ag.data_aula)}</td>
+            <td><span class="status-pill status-${ag.status}">${ag.status}</span></td>
+            <td>
+                <select class="select-prof filtro__select" data-id="${ag.id}">
+                    <option value="">Selecionar Coach</option>
+                    ${professores.map(p => `<option value="${p.id}" ${ag.professor_id === p.id ? 'selected' : ''}>${p.nome}</option>`).join('')}
+                </select>
+            </td>
+            <td>
+                <a href="detalhe.html?id=${ag.id}" class="btn btn--secundario">Ver</a>
+            </td>
+        </tr>
+    `).join('');
+}
+
+document.addEventListener("DOMContentLoaded", inicializarPainel);
+document.getElementById("btnAtualizar")?.addEventListener("click", inicializarPainel);
