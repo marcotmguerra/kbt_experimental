@@ -1,2 +1,3 @@
-- colocar as core do kbt.
-procurar referencias no adobe color
+trocos os emojis por lucide
+
+<script src="https://unpkg.com/lucide@latest"></script>
