@@ -28,23 +28,55 @@ async function carregar() {
   btnZap.href = linkWhatsApp(ag.aluno_whatsapp, `Olá ${ag.aluno_nome}, aqui é da Kabuto! Confirmado sua aula dia ${formatarDataBR(ag.data_aula)}?`);
 
   // 3. Processa Informações do Forms (form_raw)
+  // ... dentro da função carregar() ...
+
+  // 3. Processar e exibir as informações em RAW (Formulário)
   const containerForms = document.getElementById("detFormRaw");
+  
   if (ag.form_raw) {
     try {
-      const dados = typeof ag.form_raw === 'string' ? JSON.parse(ag.form_raw) : ag.form_raw;
-      containerForms.innerHTML = Object.entries(dados)
-        .map(([chave, valor]) => `
-          <div class="detalhe-item" style="margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
-            <strong style="display:block; font-size: 12px; color: #666; text-transform: uppercase;">${chave.replace(/_/g, ' ')}</strong>
-            <span style="font-size: 16px; color: #333;">${valor || '—'}</span>
-          </div>
-        `).join('');
-    } catch (e) {
-      containerForms.innerHTML = `<p class="vazio">Erro ao processar dados do formulário.</p>`;
+      // Garante que os dados sejam um objeto (se vier string, transforma em JSON)
+      const dadosRaw = typeof ag.form_raw === 'string' ? JSON.parse(ag.form_raw) : ag.form_raw;
+      
+      // Limpa o "Carregando..."
+      containerForms.innerHTML = "";
+
+      // Transforma o JSON em elementos HTML legíveis
+      const entradas = Object.entries(dadosRaw);
+
+      if (entradas.length === 0) {
+        containerForms.innerHTML = `<p class="vazio">Nenhuma resposta detalhada encontrada.</p>`;
+      } else {
+        entradas.forEach(([chave, valor]) => {
+          // Formata a chave para ficar bonita (ex: "objetivo_aluno" vira "Objetivo Aluno")
+          const chaveFormatada = chave
+            .replace(/_/g, " ")
+            .replace(/^\w/, (c) => c.toUpperCase());
+
+          const itemDiv = document.createElement("div");
+          itemDiv.className = "item-raw"; // Você pode estilizar essa classe no CSS
+          itemDiv.style.cssText = "margin-bottom: 16px; border-bottom: 1px solid #f0f2f5; padding-bottom: 8px;";
+          
+          itemDiv.innerHTML = `
+            <label style="display: block; font-size: 12px; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
+              ${chaveFormatada}
+            </label>
+            <span style="display: block; font-size: 16px; color: #111827; font-weight: 500;">
+              ${valor || "—"}
+            </span>
+          `;
+          containerForms.appendChild(itemDiv);
+        });
+      }
+    } catch (err) {
+      console.error("Erro ao processar form_raw:", err);
+      containerForms.innerHTML = `<p class="vazio">Erro ao ler dados do formulário.</p>`;
     }
   } else {
-    containerForms.innerHTML = `<p class="vazio">Nenhuma informação adicional disponível.</p>`;
+    containerForms.innerHTML = `<p class="vazio">O aluno não preencheu informações adicionais.</p>`;
   }
+
+// ... restante da função ...
 
   // 4. Lógica de Admin (Matrícula)
   // O window.__perfil é definido de forma assíncrona no guardas.js

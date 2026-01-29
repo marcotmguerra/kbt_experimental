@@ -4,18 +4,64 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Detalhe da Aula — SAE</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/detalhe.css" />
+
+  <!-- ajustes de layout -->
+  <style>
+    .pagina-det__conteudo {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .hero__info {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .hero__grid {
+      width: 100%;
+      max-width: 700px;
+      margin-top: 16px;
+    }
+
+    .acoes {
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      max-width: 900px;
+      margin: 24px auto;
+      text-align: center;
+    }
+
+    .lista-detalhes {
+      text-align: left;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+  </style>
 </head>
 
 <body>
   <header class="topbar-det">
     <div class="topbar-det__esquerda">
-      <!-- Botão voltar agora funciona via Histórico -->
       <a href="javascript:history.back()" id="btnVoltar" class="link-voltar">
         <span class="material-symbols-outlined">arrow_back</span>
         Voltar
@@ -36,8 +82,7 @@
 
   <main class="pagina-det">
     <div class="pagina-det__conteudo">
-      
-      <!-- Seção exclusiva para Admin: Controle de Matrícula/Venda -->
+
       <section id="secaoAdminVenda" class="card card--admin" hidden style="background: #fff3cd; border: 1px solid #ffeeba; margin-bottom: 20px; padding: 15px; border-radius: 12px;">
         <div style="display: flex; align-items: center; justify-content: space-between;">
           <div>
@@ -45,17 +90,14 @@
             <p style="margin: 0; font-size: 14px;">Marque se o aluno realizou a matrícula após a aula.</p>
           </div>
           <label style="display: flex; align-items: center; gap: 10px; font-weight: bold; cursor: pointer;">
-            Matriculado? 
+            Matriculado?
             <input type="checkbox" id="checkMatriculado" style="width: 20px; height: 20px;">
           </label>
         </div>
       </section>
 
+      <!-- HERO SEM FOTO -->
       <section class="hero">
-        <div class="hero__foto">
-          <span class="hero__icone material-symbols-outlined">person</span>
-        </div>
-
         <div class="hero__info">
           <h1 id="detAluno" class="hero__nome">Carregando...</h1>
           <p id="subtitulo" class="hero__sub">Aula Experimental</p>
@@ -108,6 +150,7 @@
           <p class="vazio">Carregando informações…</p>
         </div>
       </section>
+
     </div>
   </main>
 
