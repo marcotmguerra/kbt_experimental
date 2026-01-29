@@ -1,5 +1,18 @@
 /* /public/css/base.css */
 
+
+:root{
+  --primario: #400c88; 
+  --bg-claro:#f6f7f8; 
+  --texto:#111418;
+  --texto-fraco: #404244;; 
+  --borda:#e5e7eb; 
+  --card:#ffffff;
+  --ok:#16a34a; 
+  --erro:#ef4444;
+}
+
+
 /* RESET simples */
 *{ box-sizing: border-box; }
 html, body{ height: 100%; }
@@ -46,17 +59,17 @@ input, select{
 }
 
 input:focus, select:focus{
-  border-color: #137fec;                /* muda a cor da borda no foco */
+  border-color: var(--primario);                /* muda a cor da borda no foco */
   box-shadow: 0 0 0 4px rgba(19,127,236,.15);
 }
 
 /* botão padrão */
 button{
-  width: 100%;
+  width: auto;
   padding: 12px 14px;
   border: 0;
   border-radius: 12px;
-  background: #137fec;   /* muda cor do botão aqui */
+  background: var(--primario);   /* muda cor do botão aqui */
   color: #fff;
   font-weight: 900;
   cursor: pointer;
@@ -78,4 +91,39 @@ button:disabled{
   cursor: not-allowed;
   transform: none;
   filter: none;
+}
+
+.logo-icon {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+
+.card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.logo-box {
+  width: 70px;
+  height: 70px;
+  background: var(--primario);
+  border-radius: 16px; /* arredonda o quadrado */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.logo2-icon {
+  width: 60px;
+  height: auto;
 }

@@ -1,8 +1,13 @@
 /* /public/css/detalhe.css */
 :root{
-  --primario:#137fec; --bg-claro:#f6f7f8; --texto:#111418;
-  --texto-fraco:#617589; --borda:#e5e7eb; --card:#ffffff;
-  --ok:#16a34a; --erro:#ef4444;
+  --primario: #400c88; 
+  --bg-claro:#f6f7f8; 
+  --texto:#111418;
+  --texto-fraco: #404244;; 
+  --borda:#e5e7eb; 
+  --card:#ffffff;
+  --ok:#16a34a; 
+  --erro:#ef4444;
 }
 
 body{ margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background:var(--bg-claro); color:var(--texto); }
@@ -22,7 +27,7 @@ body{ margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto,
 .link-voltar:hover{ filter:brightness(.95); }
 
 .marca{ display:flex; align-items:center; gap:10px; }
-.marca__icone{ width:36px; height:36px; border-radius:12px; background:var(--primario); color:#fff; display:grid; place-items:center; }
+.marca__icone{ width:50px; height:50px; border-radius:12px; background:var(--primario); color:#fff; display:grid; place-items:center; }
 .marca__titulo{ margin:0; font-size:16px; font-weight:900; }
 
 .status-pill{
