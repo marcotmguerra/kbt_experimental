@@ -1,31 +1,71 @@
-// /public/js/util.js
-export function mostrar(el){ if (el) el.hidden = false; }
-export function esconder(el){ if (el) el.hidden = true; }
-export function setTexto(el, txt){ if (el) el.textContent = txt ?? ""; }
+export function showToast(mensagem, tipo = "sucesso") {
+  let container = document.querySelector(".toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.className = "toast-container";
+    document.body.appendChild(container);
+  }
 
-export function formatarDataBR(dataISO){
-  if (!dataISO) return "—";
-  const d = new Date(dataISO);
-  if (isNaN(d.getTime())) return String(dataISO);
-  return d.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+  const toast = document.createElement("div");
+  toast.className = `toast toast--${tipo}`;
+  const icon = tipo === "sucesso" ? "check_circle" : "error";
+  
+  toast.innerHTML = `
+    <span class="material-symbols-outlined">${icon}</span>
+    <span style="font-weight:600">${mensagem}</span>
+  `;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = "slideIn 0.3s ease-in reverse forwards";
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
 }
 
-export function somenteNumeros(str){ return (str || "").replace(/\D/g, ""); }
+// remover o toast temporario se pagar rebento
 
-export function normalizarWhatsApp(telefone){
-  let t = somenteNumeros(telefone);
-  if (t.startsWith("55") && t.length >= 12) return t;
-  if (t.length === 10 || t.length === 11) return "55" + t;
-  return t;
+export function showToast(mensagem, tipo = "sucesso") {
+  // Cria o container se não existir
+  let container = document.getElementById("toast-container");
+  if (!container) {
+    container = document.createElement("div");
+    container.id = "toast-container";
+    container.style.cssText = "position:fixed; top:20px; right:20px; z-index:9999; display:grid; gap:10px;";
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement("div");
+  const cor = tipo === "sucesso" ? "#16a34a" : "#ef4444";
+  
+  toast.style.cssText = `
+    background: #fff; color: #111418; padding: 16px 20px; border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-left: 6px solid ${cor};
+    display: flex; align-items: center; gap: 12px; font-weight: 800;
+    animation: slideIn 0.3s ease-out; font-family: Inter, sans-serif;
+  `;
+
+  toast.innerHTML = `
+    <span class="material-symbols-outlined" style="color:${cor}">
+      ${tipo === "sucesso" ? "check_circle" : "error"}
+    </span>
+    ${mensagem}
+  `;
+
+  container.appendChild(toast);
+
+  // Remover após 4 segundos
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transition = "0.5s";
+    setTimeout(() => toast.remove(), 500);
+  }, 4000);
 }
 
-export function linkWhatsApp(telefone, mensagem=""){
-  const t = normalizarWhatsApp(telefone);
-  const texto = encodeURIComponent(mensagem);
-  return `https://wa.me/${t}${mensagem ? `?text=${texto}` : ""}`;
+// Adicione a animação no seu base.css
+/*
+@keyframes slideIn {
+  from { transform: translateX(100%); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
 }
-
-export function getQueryParam(nome){
-  const url = new URL(window.location.href);
-  return url.searchParams.get(nome);
-}
+*/

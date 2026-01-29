@@ -117,25 +117,33 @@ function renderizarTabela(){
   tbody.innerHTML = lista.map(linhaHTML).join("");
 }
 
-function atualizarStats(){
-  const pendentes = cacheAgendamentos.filter(a => !a.professor_id).length;
-  const professores = cacheProfessores.length;
+// Adicione isso ao seu admin.lista.js
+function atualizarStatsDinamico(agendamentos) {
+  const total = agendamentos.length;
+  const compareceram = agendamentos.filter(a => a.status === 'confirmado').length;
+  const matriculados = agendamentos.filter(a => a.matriculado === true).length;
+  
+  // Taxa de Conversão: (Matriculados / Compareceram)
+  const taxaConversao = compareceram > 0 
+    ? ((matriculados / compareceram) * 100).toFixed(0) 
+    : 0;
 
-  const hoje = new Date();
-  const ini = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 0,0,0);
-  const fim = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate(), 23,59,59);
+  // Atualiza os cards na tela
+  if(document.getElementById("statPendentes")) {
+    document.getElementById("statPendentes").textContent = agendamentos.filter(a => a.status === 'pendente').length;
+  }
+  
+  // Substituímos o card de "Coaches" por "Conversão" no Dash Principal
+  const elConversao = document.getElementById("statProfessores");
+  if(elConversao) {
+    elConversao.textContent = taxaConversao + "%";
+    elConversao.closest('.stat-card').querySelector('.stat-card__label').textContent = "Conversão (Vendas)";
+  }
 
-  const hojeCount = cacheAgendamentos.filter(a => {
-    const dt = new Date(a.created_at || a.data_aula);
-    return dt >= ini && dt <= fim;
-  }).length;
-
-  const elPend = document.getElementById("statPendentes");
-  const elProf = document.getElementById("statProfessores");
-  const elHoje = document.getElementById("statHoje");
-  if (elPend) elPend.textContent = String(pendentes);
-  if (elProf) elProf.textContent = String(professores);
-  if (elHoje) elHoje.textContent = String(hojeCount);
+  if(document.getElementById("statHoje")) {
+    document.getElementById("statHoje").textContent = compareceram;
+    document.querySelector(".stat-card:nth-child(3) .stat-card__label").textContent = "Presenças Confirmadas";
+  }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
