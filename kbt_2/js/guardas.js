@@ -58,3 +58,12 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.__perfil = perfil;
   window.__user = user;
 });
+
+
+const btnSair = document.getElementById("btnSair");
+if (btnSair) {
+    btnSair.onclick = async () => {
+        await supabase.auth.signOut();
+        window.location.href = "login.html";
+    };
+}

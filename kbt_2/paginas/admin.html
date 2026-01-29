@@ -30,19 +30,18 @@
         </div>
 
         <nav class="menu">
-          <a class="menu__item" href="#"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
-          <a class="menu__item menu__item--ativo" href="#"><span class="material-symbols-outlined">assignment</span><span>Inscrições</span></a>
-          <a class="menu__item" href="#"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
-          <a class="menu__item" href="#"><span class="material-symbols-outlined">calendar_today</span><span>Agenda</span></a>
+          <a class="menu__item" href="/paginas/admin.html"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
+          <a class="menu__item" href="/paginas/admin-coachs.html"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
+          <a class="menu__item" href="/paginas/agendamentos.html"><span class="material-symbols-outlined">calendar_today</span><span>agendamentos</span></a>
 
           <div class="menu__rodape">
-            <a class="menu__item" href="#"><span class="material-symbols-outlined">settings</span><span>Configurações</span></a>
+            
 
             <button id="btnSair" class="menu__item menu__item--botao" type="button">
               <span class="material-symbols-outlined">logout</span><span>Sair</span>
             </button>
 
-            <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p>
+            <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p> <!--colocar o usuario aqui-->
           </div>
         </nav>
       </div>
@@ -59,17 +58,7 @@
           </div>
         </div>
 
-        <div class="topbar__direita">
-          <button class="icon-btn" type="button" aria-label="Notificações">
-            <span class="material-symbols-outlined">notifications</span> <!--Ver a necessidade. PQ ja vai aparecer na pagina-->
-          </button>
-          <button class="icon-btn" type="button" aria-label="Mensagens">
-            <span class="material-symbols-outlined">chat_bubble</span> <!--Verificar a necessidade. Talvez colocar a função
-            do professor falar algo com o adm. Tipo um chat. Verificar a necessidade.-->
-          </button>
-          <div class="separador-vertical"></div>
-          <div class="avatar" title="Admin"></div>
-        </div>
+        
       </header>
 
       <section class="conteudo">

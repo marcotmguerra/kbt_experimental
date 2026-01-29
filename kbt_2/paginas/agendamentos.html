@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="pt-br" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agenda Mensal — SAE</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+</head>
+
+<body>
+  <div class="app">
+    <!-- Sidebar (Igual ao admin) -->
+    <aside class="sidebar">
+      <div class="sidebar__conteudo">
+        <div class="brand">
+          <div class="brand__icone"><img src="../img/KBT_logo2.png" alt="Logo" class="logo-icon"></div>
+          <div class="brand__texto">
+            <h1 class="brand__titulo">SAE</h1>
+            <p class="brand__subtitulo">Sistema de aula experimental</p>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <a class="menu__item" href="/paginas/admin.html"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
+          <a class="menu__item" href="/paginas/admin-coachs.html"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
+          <a class="menu__item" href="/paginas/agendamentos.html"><span class="material-symbols-outlined">calendar_today</span><span>agendamentos</span></a>
+
+          <div class="menu__rodape">
+            
+
+            <button id="btnSair" class="menu__item menu__item--botao" type="button">
+              <span class="material-symbols-outlined">logout</span><span>Sair</span>
+            </button>
+
+            <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p> <!--colocar o usuario aqui-->
+          </div>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar__esquerda">
+          <h2 class="topbar__titulo">Agenda e Feedbacks</h2>
+          <div class="busca">
+            <span class="material-symbols-outlined busca__icone">search</span>
+            <input id="buscaAgenda" class="busca__input" type="search" placeholder="Buscar aluno..." />
+          </div>
+        </div>
+        <div class="topbar__direita">
+            
+        </div>
+      </header>
+
+      <section class="conteudo">
+        <!-- Filtros Superiores -->
+        <div class="secao-topo">
+          <div class="secao-acoes">
+            <label class="filtro">
+              <span>Mês da Aula</span>
+              <select id="filtroMes" class="filtro__select">
+                <option value="01">Janeiro</option>
+                <option value="02">Fevereiro</option>
+                <option value="03">Março</option>
+                <option value="04">Abril</option>
+                <option value="05">Maio</option>
+                <option value="06">Junho</option>
+                <option value="07">Julho</option>
+                <option value="08">Agosto</option>
+                <option value="09">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezembro</option>
+              </select>
+            </label>
+
+            <label class="filtro">
+              <span>Coach</span>
+              <select id="filtroCoach" class="filtro__select">
+                <option value="todos">Todos os Coaches</option>
+              </select>
+            </label>
+
+            <label class="filtro">
+                <span>Venda</span>
+                <select id="filtroMatricula" class="filtro__select">
+                  <option value="todos">Todos</option>
+                  <option value="sim">Matriculados</option>
+                  <option value="nao">Não Matriculados</option>
+                </select>
+              </label>
+
+            <button id="btnExportar" class="btn btn--secundario">
+              <span class="material-symbols-outlined">download</span> Exportar
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabela de Resultados -->
+        <section class="tabela-card">
+          <div class="tabela-scroll">
+            <table class="tabela">
+              <thead>
+                <tr>
+                  <th>Data/Hora</th>
+                  <th>Aluno</th>
+                  <th>Coach</th>
+                  <th>Status</th>
+                  <th>Matrícula</th>
+                  <th>Feedbacks do Forms</th>
+                  <th class="tabela__acao">Detalhes</th>
+                </tr>
+              </thead>
+              <tbody id="tabelaAgenda">
+                <!-- Preenchido via JS -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="../js/guardas.js"></script>
+  <script type="module" src="../js/admin.agendamentos.js"></script>
+</body>
+</html>

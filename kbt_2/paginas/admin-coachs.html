@@ -33,22 +33,29 @@
           <div class="brand__icone"><img src="../img/KBT_logo2.png" alt="Logo" class="logo-icon"></div>
           <div class="brand__texto">
             <h1 class="brand__titulo">SAE</h1>
-            <p class="brand__subtitulo">Admin Panel</p>
+            <p class="brand__subtitulo">Sistema de aula experimental</p>
           </div>
         </div>
         <nav class="menu">
-          <a class="menu__item" href="admin.html"><span class="material-symbols-outlined">assignment</span><span>Inscrições</span></a>
-          <a class="menu__item menu__item--ativo" href="#"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
-          <button id="btnSair" class="menu__item menu__item--botao"><span class="material-symbols-outlined">logout</span><span>Sair</span></button>
-        </nav>
-      </div>
+          <a class="menu__item" href="/paginas/admin.html"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
+          <a class="menu__item" href="/paginas/admin-coachs.html"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
+          <a class="menu__item" href="/paginas/agendamentos.html"><span class="material-symbols-outlined">calendar_today</span><span>agendamentos</span></a>
+
+          <div class="menu__rodape">
+            
+
+            <button id="btnSair" class="menu__item menu__item--botao" type="button">
+              <span class="material-symbols-outlined">logout</span><span>Sair</span>
+            </button>
+
+            <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p> <!--colocar o usuario aqui-->
+          </div>
     </aside>
 
     <main class="main">
       <header class="topbar">
         <h2 class="topbar__titulo">Gestão da Equipe</h2>
         <div class="topbar__direita">
-          <div class="avatar"></div>
         </div>
       </header>
 
