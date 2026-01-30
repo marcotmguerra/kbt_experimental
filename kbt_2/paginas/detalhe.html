@@ -3,78 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Detalhe da Aula — SAE</title>
-
+  <title>Ficha do Aluno — SAE</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
-
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/detalhe.css" />
-
-  <!-- ajustes de layout -->
-  <style>
-    .pagina-det__conteudo {
-      max-width: 900px;
-      margin: 0 auto;
-    }
-
-    .hero {
-      display: flex;
-      justify-content: center;
-      text-align: center;
-    }
-
-    .hero__info {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .hero__grid {
-      width: 100%;
-      max-width: 700px;
-      margin-top: 16px;
-    }
-
-    .acoes {
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    .card {
-      max-width: 900px;
-      margin: 24px auto;
-      text-align: center;
-    }
-
-    .lista-detalhes {
-      text-align: left;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-  </style>
 </head>
-
 <body>
   <header class="topbar-det">
     <div class="topbar-det__esquerda">
-      <a href="javascript:history.back()" id="btnVoltar" class="link-voltar">
-        <span class="material-symbols-outlined">arrow_back</span>
-        Voltar
-      </a>
-
+      <a href="javascript:history.back()" class="link-voltar"><span class="material-symbols-outlined">arrow_back</span> Voltar</a>
       <div class="marca">
-        <div class="marca__icone">
-          <img src="../img/KBT_logo2.png" alt="Logo KBT" class="logo-icon">
-        </div>
+        <img src="../img/KBT_logo2.png" alt="Logo" class="logo-icon">
         <h2 class="marca__titulo">Ficha do Aluno</h2>
       </div>
     </div>
-
     <div class="topbar-det__direita">
       <span id="badgeStatus" class="status-pill">Pendente</span>
     </div>
@@ -82,86 +26,70 @@
 
   <main class="pagina-det">
     <div class="pagina-det__conteudo">
-
-      <section id="secaoAdminVenda" class="card card--admin" hidden style="background: #fff3cd; border: 1px solid #ffeeba; margin-bottom: 20px; padding: 15px; border-radius: 12px;">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-          <div>
-            <h3 style="margin: 0; color: #856404;">Controle Administrativo</h3>
-            <p style="margin: 0; font-size: 14px;">Marque se o aluno realizou a matrícula após a aula.</p>
-          </div>
-          <label style="display: flex; align-items: center; gap: 10px; font-weight: bold; cursor: pointer;">
-            Matriculado?
-            <input type="checkbox" id="checkMatriculado" style="width: 20px; height: 20px;">
-          </label>
+      
+      <!-- PAINEL ADMIN: MATRÍCULA -->
+      <section id="secaoAdminVenda" class="card card--venda-admin">
+        <div class="admin-venda-wrapper">
+          <p>Aluno realizou a matrícula (Venda)?</p>
+          <input type="checkbox" id="checkMatriculado">
         </div>
       </section>
 
-      <!-- HERO SEM FOTO -->
       <section class="hero">
         <div class="hero__info">
           <h1 id="detAluno" class="hero__nome">Carregando...</h1>
-          <p id="subtitulo" class="hero__sub">Aula Experimental</p>
-
           <div class="hero__grid">
-            <div class="mini-card">
-              <p class="mini-card__label">Data</p>
-              <p id="detData" class="mini-card__valor">—</p>
-            </div>
-            <div class="mini-card">
-              <p class="mini-card__label">Tipo</p>
-              <p id="detTipo" class="mini-card__valor">—</p>
-            </div>
-            <div class="mini-card">
-              <p class="mini-card__label">WhatsApp</p>
-              <p id="detWhatsapp" class="mini-card__valor">—</p>
-            </div>
-            <div class="mini-card">
-              <p class="mini-card__label">Status</p>
-              <p id="detStatus" class="mini-card__valor">—</p>
-            </div>
+            <div class="mini-card"><p class="mini-card__label">Data</p><p id="detData">—</p></div>
+            <div class="mini-card"><p class="mini-card__label">Tipo</p><p id="detTipo">—</p></div>
+            <div class="mini-card"><p class="mini-card__label">WhatsApp</p><p id="detWhatsapp">—</p></div>
+            <div class="mini-card"><p class="mini-card__label">Status</p><p id="detStatus">—</p></div>
           </div>
 
           <div class="acoes">
-            <a id="btnWhatsapp" class="btn btn--primario" href="#" target="_blank">
-              <span class="material-symbols-outlined">chat</span>
-              Chamar no WhatsApp
-            </a>
+            <a id="btnWhatsapp" class="btn btn--primario" target="_blank"><span class="material-symbols-outlined">chat</span> WhatsApp</a>
+            
+            <!-- PAINEL ADMIN: PRESENÇA -->
+            <div id="containerAdminAcoes" class="admin-presenca-area">
+              <div class="admin-botoes-row">
+                <button id="btnConfirmar" class="btn btn--ok">Confirmar Presença</button>
+                <button id="btnFaltou" class="btn btn--erro">Marcar Falta</button>
+              </div>
+              <label class="check-recepcao">
+                <input type="checkbox" id="checkRecepcao"> Coach levou o aluno à recepção?
+              </label>
+            </div>
+          </div>
+        </div>
+      </section>
 
-            <button id="btnConfirmar" class="btn btn--ok">
-              <span class="material-symbols-outlined">check_circle</span>
-              Confirmar Presença
-            </button>
+      <!-- SEÇÃO DE FEEDBACK -->
+      <section class="card card-feedback">
+        <h3 class="card-feedback-titulo">
+          <span class="material-symbols-outlined">rate_review</span> Relatório da Aula
+        </h3>
+        
+        <!-- O PROFESSOR ESCREVE AQUI -->
+        <div id="containerFeedbackCoach">
+          <textarea id="txtFeedbackCoach" placeholder="Descreva como foi a aula..."></textarea>
+          <button id="btnSalvarFeedback" class="btn btn--primario btn-full">Salvar Relatório de Aula</button>
+        </div>
 
-            <button id="btnFaltou" class="btn btn--erro">
-              <span class="material-symbols-outlined">cancel</span>
-              Marcar Falta
-            </button>
+        <!-- O ADMIN LÊ AQUI -->
+        <div id="containerFeedbackAdmin">
+          <div class="feedback-admin-box">
+            <p id="pFeedbackTexto">Aguardando feedback do coach...</p>
           </div>
         </div>
       </section>
 
       <section class="card">
-        <div class="card__topo">
-          <h2 class="card__titulo">Informações do Formulário</h2>
-          <p class="card__subtitulo">Respostas enviadas pelo aluno no agendamento.</p>
-        </div>
-
-        <div id="detFormRaw" class="lista-detalhes">
-          <p class="vazio">Carregando informações…</p>
-        </div>
+        <h3 class="card-feedback-titulo">Dados do Agendamento</h3>
+        <div id="detFormRaw" class="lista-detalhes"></div>
       </section>
-
     </div>
   </main>
 
   <script type="module" src="../js/guardas.js"></script>
   <script type="module" src="../js/professor.detalhe.js"></script>
-
-   <!-- LUCIDE -->
- <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    lucide.createIcons();
-  </script>
-  
 </body>
 </html>

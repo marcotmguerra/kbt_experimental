@@ -5,7 +5,6 @@ async function carregarPosAula() {
     const lista = document.getElementById("listaPosAula");
     if (!lista) return;
 
-    // Busca apenas Confirmados ou Faltas (Pós-aula)
     const { data, error } = await supabase
         .from("agendamentos")
         .select("*")
@@ -14,14 +13,7 @@ async function carregarPosAula() {
 
     if (error) return;
 
-    // Atualiza Stats
-    const pendentes = data.filter(a => !a.avaliacao_enviada || !a.feedback_enviado).length;
-    document.getElementById("statPendentesPos").textContent = pendentes;
-
-    if (data.length === 0) {
-        lista.innerHTML = `<tr><td colspan="4" class="tabela__vazio">Nenhum aluno finalizou aula experimental ainda.</td></tr>`;
-        return;
-    }
+    document.getElementById("statPendentesPos").textContent = data.filter(a => !a.avaliacao_enviada || !a.feedback_enviado).length;
 
     lista.innerHTML = data.map(aluno => {
         const isPendente = !aluno.avaliacao_enviada || !aluno.feedback_enviado;
@@ -34,49 +26,43 @@ async function carregarPosAula() {
                         <span class="aluno__sub">${formatarDataBR(aluno.data_aula)}</span>
                     </div>
                 </td>
-                <td><span class="status-pill status-${aluno.status}">${aluno.status}</span></td>
                 <td>
-                    <div style="display:flex; gap:8px;">
-                        <button class="btn-wpp ${aluno.avaliacao_enviada ? 'btn-wpp--enviado' : ''}" 
-                                onclick="window.enviarMensagem('${aluno.id}', 'avaliacao', '${aluno.aluno_whatsapp}', '${aluno.aluno_nome}')">
-                            <span class="material-symbols-outlined" style="font-size:16px;">star</span>
-                            ${aluno.avaliacao_enviada ? 'Enviado' : 'Avaliação'}
-                        </button>
-                        <button class="btn-wpp ${aluno.feedback_enviado ? 'btn-wpp--enviado' : ''}" 
-                                onclick="window.enviarMensagem('${aluno.id}', 'feedback', '${aluno.aluno_whatsapp}', '${aluno.aluno_nome}')">
-                            <span class="material-symbols-outlined" style="font-size:16px;">assignment</span>
-                            ${aluno.feedback_enviado ? 'Enviado' : 'Link Forms'}
-                        </button>
+                    <span class="status-pill status-${aluno.status}">${aluno.status}</span><br>
+                    <small style="font-weight:bold; color:${aluno.levou_recepcao ? '#16a34a' : '#ef4444'}">
+                        ${aluno.levou_recepcao ? '✓ Levou na Recepção' : '✗ Não levou na Recepção'}
+                    </small>
+                </td>
+                <td style="max-width:250px; font-size:12px; color:#555;">
+                    <div style="max-height:60px; overflow-y:auto; border:1px solid #eee; padding:5px; border-radius:5px; background:#fcfcfc;">
+                        <strong>Feedback Coach:</strong><br>
+                        ${aluno.feedback_coach || '<em>Aguardando feedback...</em>'}
                     </div>
                 </td>
                 <td>
+                    <div style="display:flex; gap:8px; margin-bottom:5px;">
+                        <button class="btn-wpp ${aluno.avaliacao_enviada ? 'btn-wpp--enviado' : ''}" 
+                                onclick="window.enviarMensagem('${aluno.id}', 'avaliacao', '${aluno.aluno_whatsapp}', '${aluno.aluno_nome}')">
+                            <span class="material-symbols-outlined" style="font-size:16px;">star</span><span>Avaliação</span>
+                        </button>
+                        <button class="btn-wpp ${aluno.feedback_enviado ? 'btn-wpp--enviado' : ''}" 
+                                onclick="window.enviarMensagem('${aluno.id}', 'feedback', '${aluno.aluno_whatsapp}', '${aluno.aluno_nome}')">
+                            <span class="material-symbols-outlined" style="font-size:16px;">assignment</span><span>Feedback</span>
+                        </button>
+                    </div>
                     <span class="tag-status-pos ${isPendente ? 'tag-status-pos--pendente' : 'tag-status-pos--ok'}">
-                        <span class="material-symbols-outlined" style="font-size:14px;">
-                            ${isPendente ? 'priority_high' : 'check_circle'}
-                        </span>
                         ${isPendente ? 'Aguardando' : 'Finalizado'}
                     </span>
                 </td>
-            </tr>
-        `;
+            </tr>`;
     }).join('');
 }
 
-// Global para o onclick
+// Global window.enviarMensagem e carregamento igual ao anterior...
 window.enviarMensagem = async (id, tipo, telefone, nome) => {
-    let msg = "";
-    let updateData = {};
-
-    if (tipo === 'avaliacao') {
-        msg = `Olá ${nome}! Como foi sua aula experimental?`;
-        updateData = { avaliacao_enviada: true };
-    } else {
-        msg = `Oi ${nome}, poderia responder nosso feedback? [LINK_DO_FORMS]`;
-        updateData = { feedback_enviado: true };
-    }
-
+    let msg = tipo === 'avaliacao' ? `Olá ${nome}! Como foi sua aula hoje?` : `Oi ${nome}, segue o link para feedback: [LINK]`;
     window.open(linkWhatsApp(telefone, msg), '_blank');
-    await supabase.from("agendamentos").update(updateData).eq("id", id);
+    const update = tipo === 'avaliacao' ? { avaliacao_enviada: true } : { feedback_enviado: true };
+    await supabase.from("agendamentos").update(update).eq("id", id);
     carregarPosAula();
 };
 

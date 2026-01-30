@@ -4,118 +4,84 @@ import { showToast, formatarDataBR, linkWhatsApp, getQueryParam } from "./util.j
 
 async function carregar() {
   const id = getQueryParam("id");
-  if (!id) return (window.location.href = "login.html");
+  if (!id) return;
 
-  const { data: ag, error } = await supabase
-    .from("agendamentos")
-    .select("*, profiles(nome)")
-    .eq("id", id)
-    .single();
-
+  // 1. Busca dados da aula
+  const { data: ag, error } = await supabase.from("agendamentos").select("*").eq("id", id).single();
   if (error || !ag) return showToast("Erro ao carregar detalhes", "erro");
 
-  // 1. Preenche Dados Básicos
+  // 2. Preenchimento básico
   document.getElementById("detAluno").textContent = ag.aluno_nome;
   document.getElementById("detData").textContent = formatarDataBR(ag.data_aula);
   document.getElementById("detTipo").textContent = ag.tipo_aula || "Experimental";
-  document.getElementById("detWhatsapp").textContent = ag.aluno_whatsapp || "Não informado";
-  document.getElementById("detStatus").textContent = ag.status?.toUpperCase() || "PENDENTE";
-  document.getElementById("badgeStatus").textContent = ag.status || "pendente";
+  document.getElementById("detWhatsapp").textContent = ag.aluno_whatsapp || "—";
+  document.getElementById("detStatus").textContent = (ag.status || "pendente").toUpperCase();
   document.getElementById("badgeStatus").className = `status-pill status-${ag.status}`;
+  document.getElementById("badgeStatus").textContent = ag.status || "pendente";
+  document.getElementById("btnWhatsapp").href = linkWhatsApp(ag.aluno_whatsapp);
 
-  // 2. Configura WhatsApp
-  const btnZap = document.getElementById("btnWhatsapp");
-  btnZap.href = linkWhatsApp(ag.aluno_whatsapp, `Olá ${ag.aluno_nome}, aqui é da Kabuto! Confirmado sua aula dia ${formatarDataBR(ag.data_aula)}?`);
-
-  // 3. Processa Informações do Forms (form_raw)
-  // ... dentro da função carregar() ...
-
-  // 3. Processar e exibir as informações em RAW (Formulário)
+  // 3. Renderiza Form_raw
   const containerForms = document.getElementById("detFormRaw");
-  
   if (ag.form_raw) {
-    try {
-      // Garante que os dados sejam um objeto (se vier string, transforma em JSON)
-      const dadosRaw = typeof ag.form_raw === 'string' ? JSON.parse(ag.form_raw) : ag.form_raw;
-      
-      // Limpa o "Carregando..."
-      containerForms.innerHTML = "";
-
-      // Transforma o JSON em elementos HTML legíveis
-      const entradas = Object.entries(dadosRaw);
-
-      if (entradas.length === 0) {
-        containerForms.innerHTML = `<p class="vazio">Nenhuma resposta detalhada encontrada.</p>`;
-      } else {
-        entradas.forEach(([chave, valor]) => {
-          // Formata a chave para ficar bonita (ex: "objetivo_aluno" vira "Objetivo Aluno")
-          const chaveFormatada = chave
-            .replace(/_/g, " ")
-            .replace(/^\w/, (c) => c.toUpperCase());
-
-          const itemDiv = document.createElement("div");
-          itemDiv.className = "item-raw"; // Você pode estilizar essa classe no CSS
-          itemDiv.style.cssText = "margin-bottom: 16px; border-bottom: 1px solid #f0f2f5; padding-bottom: 8px;";
-          
-          itemDiv.innerHTML = `
-            <label style="display: block; font-size: 12px; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
-              ${chaveFormatada}
-            </label>
-            <span style="display: block; font-size: 16px; color: #111827; font-weight: 500;">
-              ${valor || "—"}
-            </span>
-          `;
-          containerForms.appendChild(itemDiv);
-        });
-      }
-    } catch (err) {
-      console.error("Erro ao processar form_raw:", err);
-      containerForms.innerHTML = `<p class="vazio">Erro ao ler dados do formulário.</p>`;
-    }
-  } else {
-    containerForms.innerHTML = `<p class="vazio">O aluno não preencheu informações adicionais.</p>`;
+    const dados = typeof ag.form_raw === 'string' ? JSON.parse(ag.form_raw) : ag.form_raw;
+    containerForms.innerHTML = Object.entries(dados).map(([k, v]) => `
+      <div style="margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px;">
+        <small style="color:gray; text-transform:uppercase; font-weight:bold;">${k.replace(/_/g, ' ')}</small><br>
+        <span>${v || '—'}</span>
+      </div>`).join('');
   }
 
-// ... restante da função ...
+  // 4. VERIFICAÇÃO DE CARGO EM TEMPO REAL
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
 
-  // 4. Lógica de Admin (Matrícula)
-  // O window.__perfil é definido de forma assíncrona no guardas.js
-  // Vamos verificar em um pequeno intervalo para garantir que o objeto existe
-  const checarPerfil = setInterval(() => {
-    const perfil = window.__perfil;
-    if (perfil) {
-      if (perfil.role === 'admin') {
-        const secao = document.getElementById("secaoAdminVenda");
-        const check = document.getElementById("checkMatriculado");
-        if (secao) secao.hidden = false;
-        if (check) {
-          check.checked = ag.matriculado;
-          check.onchange = async () => {
-            const { error: errUpd } = await supabase.from("agendamentos").update({ matriculado: check.checked }).eq("id", id);
-            if (!errUpd) showToast(check.checked ? "Venda registrada! 💸" : "Matrícula removida");
-          };
-        }
-      }
-      clearInterval(checarPerfil);
-    }
-  }, 100);
+  const { data: perfil } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
+  
+  if (perfil.role === 'admin') {
+    // VISÃO ADMIN
+    document.getElementById("containerAdminAcoes").style.display = "flex";
+    document.getElementById("secaoAdminVenda").style.display = "block";
+    document.getElementById("containerFeedbackAdmin").style.display = "block";
+    document.getElementById("containerFeedbackCoach").style.display = "none";
+    
+    if (ag.feedback_coach) document.getElementById("pFeedbackTexto").textContent = ag.feedback_coach;
 
-  // 5. Botões de Presença
-  document.getElementById("btnConfirmar").onclick = async () => {
-    const { error } = await supabase.from("agendamentos").update({ status: 'confirmado' }).eq("id", id);
-    if (!error) {
-        showToast("Presença confirmada!");
-        location.reload(); // Recarrega para atualizar badge e status
-    }
-  };
+    // Ações do Admin
+    const checkMatriculado = document.getElementById("checkMatriculado");
+    checkMatriculado.checked = ag.matriculado;
+    checkMatriculado.onchange = () => updateField(id, { matriculado: checkMatriculado.checked });
 
-  document.getElementById("btnFaltou").onclick = async () => {
-    const { error } = await supabase.from("agendamentos").update({ status: 'faltou' }).eq("id", id);
-    if (!error) {
-        showToast("Falta registrada", "erro");
-        location.reload();
-    }
-  };
+    const checkRecepcao = document.getElementById("checkRecepcao");
+    checkRecepcao.checked = ag.levou_recepcao;
+    checkRecepcao.onchange = () => updateField(id, { levou_recepcao: checkRecepcao.checked });
+
+    document.getElementById("btnConfirmar").onclick = () => updateField(id, { status: 'confirmado' }, true);
+    document.getElementById("btnFaltou").onclick = () => updateField(id, { status: 'faltou' }, true);
+
+  } else {
+    // VISÃO PROFESSOR (COACH)
+    document.getElementById("containerAdminAcoes").style.display = "none";
+    document.getElementById("secaoAdminVenda").style.display = "none";
+    document.getElementById("containerFeedbackAdmin").style.display = "none";
+    document.getElementById("containerFeedbackCoach").style.display = "block";
+
+    const txtFeedback = document.getElementById("txtFeedbackCoach");
+    txtFeedback.value = ag.feedback_coach || "";
+
+    document.getElementById("btnSalvarFeedback").onclick = async () => {
+      await updateField(id, { feedback_coach: txtFeedback.value });
+      showToast("Relatório salvo com sucesso!");
+    };
+  }
+}
+
+async function updateField(id, obj, reload = false) {
+  const { error } = await supabase.from("agendamentos").update(obj).eq("id", id);
+  if (!error) {
+    if (reload) location.reload(); else showToast("Dados salvos!");
+  } else {
+    showToast("Erro ao salvar", "erro");
+  }
 }
 
 document.addEventListener("DOMContentLoaded", carregar);

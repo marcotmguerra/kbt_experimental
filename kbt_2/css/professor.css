@@ -16,23 +16,40 @@ body{ margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto,
   display: flex;
   align-items: center;
   justify-content:center; 
-  gap: 12px;
+  gap: px;
 }
 
 .topbar-prof__esquerda{ 
   display:flex; 
   align-items:center; 
   justify-content:flex-end; 
-  gap:16px; 
+  gap:30px; 
 }
 .marca{ display:flex; align-items:center; gap:10px; color:var(--primario); }
 .marca__icone{ width:50px; height:50px; border-radius:12px; background:var(--primario); color:#fff; display:grid; place-items:center; }
 .marca__titulo{ margin:0; font-size:16px; font-weight:900; color:var(--texto); }
 
-.busca{ position:relative; width:340px; max-width:52vw; }
-.busca__icone{ position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--texto-fraco); font-size:20px; }
-.busca__input{ width:100%; border:0; outline:none; background:#f0f2f4; border-radius:14px; padding:10px 12px 10px 38px; font-size:14px; }
-.busca--desktop{ display:none; }
+.busca{ position:relative;
+   width:340px; 
+   max-width:52vw; 
+  }
+.busca__icone{ position:absolute; 
+  left:10px; top:50%; 
+  transform:translateY(-50%); 
+  color:var(--texto-fraco); 
+  font-size:20px; 
+}
+.busca__input{ width:100%; 
+  border:0;
+   outline:none; 
+   background:#f0f2f4;
+    border-radius:14px;
+     padding:10px 12px 10px 38px;
+      font-size:14px; 
+    }
+.busca--desktop{ 
+  display:none; 
+}
 @media (min-width:768px){ .busca--desktop{ display:block; } }
 
 .topbar-prof__direita{ display:flex; align-items:center; gap:10px; }
@@ -67,7 +84,8 @@ body{ margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto,
 /* página */
 .pagina-prof{ 
   display:flex; 
-  justify-content:center; 
+  justify-content:center;
+   
   
 }
 

@@ -1,101 +1,218 @@
 /* /public/css/detalhe.css */
-:root{
+:root {
   --primario: #400c88; 
-  --bg-claro:#f6f7f8; 
-  --texto:#111418;
-  --texto-fraco: #404244;; 
-  --borda:#e5e7eb; 
-  --card:#ffffff;
-  --ok:#16a34a; 
-  --erro:#ef4444;
+  --bg-claro: #f6f7f8; 
+  --texto: #111418;
+  --texto-fraco: #404244;
+  --borda: #e5e7eb; 
+  --card: #ffffff;
+  --ok: #16a34a; 
+  --erro: #ef4444;
 }
 
-body{ margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background:var(--bg-claro); color:var(--texto); }
-
-.topbar-det{
-  position:sticky; top:0; z-index:50;
-  background:var(--card); border-bottom:1px solid var(--borda);
-  padding:12px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px;
-}
-.topbar-det__esquerda{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-
-.link-voltar{
-  display:inline-flex; align-items:center; gap:6px;
-  text-decoration:none; color:var(--texto); font-weight:900;
-  padding:10px 12px; border-radius:14px; background:#f0f2f4;
-}
-.link-voltar:hover{ filter:brightness(.95); }
-
-.marca{ display:flex; align-items:center; gap:10px; }
-.marca__icone{ width:50px; height:50px; border-radius:12px; background:var(--primario); color:#fff; display:grid; place-items:center; }
-.marca__titulo{ margin:0; font-size:16px; font-weight:900; }
-
-.status-pill{
-  display:inline-flex; align-items:center;
-  padding:10px 12px; border-radius:999px;
-  font-weight:900; font-size:12px;
-  background:rgba(0,0,0,.06); color:var(--texto-fraco);
+body { 
+  margin: 0; 
+  font-family: Inter, system-ui, -apple-system, sans-serif; 
+  background: var(--bg-claro); 
+  color: var(--texto); 
 }
 
-.pagina-det{ display:flex; justify-content:center; }
-.pagina-det__conteudo{ width:100%; max-width:1200px; padding:18px 16px 30px; }
-
-.hero{
-  display:grid; grid-template-columns:1fr;
-  gap:16px; background:var(--card);
-  border:1px solid rgba(0,0,0,.06);
-  border-radius:18px; padding:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.04);
+/* Esconde elementos controlados pelo JS para evitar flash de conteúdo */
+#secaoAdminVenda, 
+#containerAdminAcoes, 
+#containerFeedbackCoach, 
+#containerFeedbackAdmin {
+  display: none;
 }
-@media (min-width:900px){ .hero{ grid-template-columns:260px 1fr; } }
 
-.hero__foto{
-  aspect-ratio:4/3; border-radius:16px;
-  background:linear-gradient(135deg, rgba(19,127,236,.16), rgba(0,0,0,.02));
-  display:grid; place-items:center;
+/* Topbar - */
+.topbar-det {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--card);
+  border-bottom: 1px solid var(--borda);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around ;
+  
 }
-.hero__icone{ font-size:64px; color: rgba(17,20,24,.45); }
 
-.hero__nome{ margin:0; font-size:clamp(26px, 3vw, 40px); font-weight:900; letter-spacing:-0.03em; }
-.hero__sub{ margin:8px 0 0; color:var(--texto-fraco); font-weight:800; }
+.topbar-det__esquerda { 
+  display: flex; 
+  align-items: center; 
+  gap: 16px; }
 
-.hero__grid{ margin-top:14px; display:grid; grid-template-columns:1fr; gap:10px; }
-@media (min-width:700px){ .hero__grid{ grid-template-columns:1fr 1fr; } }
-
-.mini-card{ border:1px solid var(--borda); background:#fff; border-radius:16px; padding:12px; }
-.mini-card__label{ margin:0; font-size:12px; font-weight:900; color:var(--texto-fraco); }
-.mini-card__valor{ margin:6px 0 0; font-weight:900; }
-
-.acoes{ margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
-.btn{
-  border:0; border-radius:14px; padding:12px 14px; font-weight:900;
-  cursor:pointer; display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+.link-voltar {
+  display: inline-flex; align-items: center; gap: 6px;
+  text-decoration: none; color: var(--texto); font-weight: 900;
+  padding: 10px 12px; border-radius: 14px; background: #f0f2f4;
+  font-size: 14px;
 }
-.btn--primario{ background:var(--primario); color:#fff; box-shadow:0 10px 26px rgba(19,127,236,.20); }
-.btn--primario:hover{ filter:brightness(.95); }
+.link-voltar:hover { filter: brightness(.95); }
 
-.btn--ok{ background:rgba(22,163,74,.12); color:var(--ok); }
-.btn--erro{ background:rgba(239,68,68,.12); color:var(--erro); }
-
-.card{
-  margin-top:16px; background:var(--card);
-  border:1px solid rgba(0,0,0,.06);
-  border-radius:18px; padding:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,.04);
+.marca img { 
+  width: 40px; 
+  height: 40px; 
+  object-fit: contain; 
+  
 }
-.card__titulo{ margin:0; font-size:18px; font-weight:900; }
-.card__subtitulo{ margin:6px 0 0; color:var(--texto-fraco); font-weight:700; }
+.marca__titulo { margin: 0; 
+  font-size: 16px; 
+  font-weight: 900; 
+}
 
-.lista-detalhes{ display:grid; gap:10px; margin-top:12px; }
-.item-detalhe{ border:1px solid var(--borda); border-radius:16px; padding:12px; background:#fff; }
-.item-detalhe__pergunta{ margin:0; font-size:12px; font-weight:900; color:var(--texto-fraco); }
-.item-detalhe__resposta{ margin:6px 0 0; font-weight:900; }
+/* Status Pill */
+.status-pill {
+  padding: 8px 12px; border-radius: 10px; font-weight: 900; font-size: 11px;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.status-confirmado { background: var(--ok); color: #fff; }
+.status-faltou { background: var(--erro); color: #fff; }
+.status-pendente { background: #f59e0b; color: #fff; }
+.status-atribuido { background: #137fec; color: #fff; }
 
-.vazio{ margin:0; color:var(--texto-fraco); font-weight:800; }
+/* Layout de Conteúdo */
+.pagina-det__conteudo {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 100px;
+}
 
-.mensagens{ margin-top:12px; }
-.msg{ margin:0; padding:12px 14px; border-radius:14px; font-weight:900; }
-.msg--erro{ background:rgba(239,68,68,.12); color:var(--erro); }
-.msg--ok{ background:rgba(22,163,74,.12); color:var(--ok); }
+/* Cards - Seguindo o estilo .card-aula */
+.card {
+  background: var(--card);
+  border: 1px solid rgba(0,0,0,.06);
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.04);
+  margin-bottom: 20px;
+}
 
+/* Card especial de Venda Admin */
+.card--venda-admin {
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+}
+.admin-venda-wrapper {
+  display: flex; align-items: center; justify-content: space-between;
+  font-weight: 900; color: #856404; font-size: 14px;
+}
 
+/* Hero Section */
+.hero__info { text-align: center; }
+.hero__nome { 
+  margin: 0; font-size: clamp(28px, 4vw, 40px); 
+  font-weight: 900; letter-spacing: -0.03em; 
+}
+
+/* Grid de Informações (Mini Cards) */
+.hero__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.mini-card {
+  background: #f0f2f4;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+}
+.mini-card__label {
+  display: block; font-size: 10px; font-weight: 900;
+  color: var(--texto-fraco); text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.mini-card__valor { font-weight: 900; font-size: 14px; }
+
+/* Ações e Botões */
+.acoes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn {
+  border: 0; border-radius: 14px; padding: 12px 20px;
+  font-weight: 900; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 14px; transition: transform 0.1s ease;
+}
+.btn:active { transform: scale(0.98); }
+.btn--primario { background: var(--primario); color: #fff; box-shadow: 0 8px 20px rgba(64, 12, 136, 0.2); }
+.btn--ok { background: var(--ok); color: #fff; }
+.btn--erro { background: var(--erro); color: #fff; }
+.btn-full { width: 100%; justify-content: center; }
+
+/* Área Admin de Presença */
+.admin-presenca-area { width: 100%; max-width: 400px; display: flex; flex-direction: column; gap: 10px; }
+.admin-botoes-row { display: flex; gap: 10px; }
+.admin-botoes-row .btn { flex: 1; }
+
+.check-recepcao {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  background: #f0f2f4; padding: 12px; border-radius: 14px;
+  font-weight: 800; font-size: 13px; cursor: pointer;
+}
+
+/* Feedback e Formulário */
+.card-feedback-titulo {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 18px; font-weight: 900; margin: 0 0 16px 0;
+}
+
+textarea {
+  width: 100%;
+  min-height: 140px;
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--borda);
+  background: #f0f2f4;
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+  margin-bottom: 12px;
+  resize: vertical;
+}
+textarea:focus { border-color: var(--primario); background: #fff; }
+
+.feedback-admin-box {
+  background: #f0f2f4;
+  padding: 16px;
+  border-radius: 14px;
+  border-left: 6px solid var(--primario);
+  text-align: left;
+}
+#pFeedbackTexto { margin: 0; font-style: italic; color: var(--texto-fraco); line-height: 1.6; font-weight: 700; }
+
+.lista-detalhes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  text-align: left;
+}
+
+/* Ajustes para Celular */
+@media (max-width: 600px) {
+  .topbar-det__esquerda .marca__titulo { display: none; }
+  .hero__nome { font-size: 28px; }
+  .pagina-det__conteudo { padding-top: 12px; }
+}
+
+/* centraliza a marca no meio real do header */
+.marca {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
