@@ -4,8 +4,8 @@
 <script src="https://unpkg.com/lucide@latest"></script>
 
 2 - Controle de agendamentos por mes e por semana
-2.1 - Criar relatorio diario, semanal e mensal das aulas com estatistica ( idade, programa escolhido)
-2.2 - criar uma aba para relatorios/estatisticos ( com filtro)
+
+2.2 - criar uma aba para relatorios/estatisticos ( com filtro) - FALTA O FILTRO
 
 3 - Aba do pos aula - so chega o card do aluno apos a confirmacao de presença pela recepcao ou falta
 3.1 - btn enviar mensagem de avaliação inicial no wpp pos aula exporimental ( com status)
