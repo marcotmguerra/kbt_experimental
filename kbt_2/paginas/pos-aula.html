@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="pt-br" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gestão Pós-Aula — SAE</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  <style>
+    /* Estilos específicos para os botões de WhatsApp no padrão do layout */
+    .btn-wpp {
+      background: #25d366;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-wpp:hover { filter: brightness(0.9); transform: translateY(-1px); }
+    .btn-wpp--enviado { background: #f0f2f4; color: #9ca3af; cursor: default; transform: none !important; }
+    
+    .tag-status-pos {
+      font-size: 11px;
+      font-weight: 900;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tag-status-pos--pendente { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+    .tag-status-pos--ok { background: rgba(22, 163, 74, 0.1); color: #16a34a; }
+  </style>
+</head>
+
+<body class="tema-claro">
+  <div class="app">
+    <!-- Sidebar Idêntica ao Admin -->
+    <aside class="sidebar">
+      <div class="sidebar__conteudo">
+        <div class="brand">
+          <div class="brand__icone"><img src="../img/KBT_logo2.png" alt="Logo" class="logo-icon"></div>
+          <div class="brand__texto">
+            <h1 class="brand__titulo">SAE</h1>
+            <p class="brand__subtitulo">Sistema de aula experimental</p>
+          </div>
+        </div>
+
+        <nav class="menu">
+          <a class="menu__item" href="/paginas/admin.html"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
+          <a class="menu__item" href="/paginas/admin-coachs.html"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
+          <a class="menu__item" href="/paginas/agendamentos.html"><span class="material-symbols-outlined">calendar_today</span><span>Agendamentos</span></a>
+          <a class="menu__item menu__item--ativo" href="/paginas/pos-aula.html"><span class="material-symbols-outlined">forum</span><span>Pós-Aula</span></a>
+
+          <div class="menu__rodape">
+            <button id="btnSair" class="menu__item menu__item--botao" type="button">
+              <span class="material-symbols-outlined">logout</span><span>Sair</span>
+            </button>
+            <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar__esquerda">
+          <h2 class="topbar__titulo">Gestão Pós-Aula e Feedback</h2>
+          <div class="busca">
+            <span class="material-symbols-outlined busca__icone">search</span>
+            <input id="buscaPos" class="busca__input" type="search" placeholder="Buscar aluno..." />
+          </div>
+        </div>
+      </header>
+
+      <section class="conteudo">
+        <!-- Stats seguindo o padrão do admin.html -->
+        <div class="stats">
+          <article class="stat-card">
+            <div class="stat-card__topo">
+              <p class="stat-card__label">Aguardando Status</p>
+              <span class="material-symbols-outlined stat-card__icone">priority_high</span>
+            </div>
+            <div class="stat-card__valor">
+              <span id="statPendentesPos" class="stat-card__numero">0</span>
+              <span class="stat-card__chip stat-card__chip--alerta">Pendente</span>
+            </div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__topo">
+              <p class="stat-card__label">Feedbacks Recebidos</p>
+              <span class="material-symbols-outlined stat-card__icone">reviews</span>
+            </div>
+            <div class="stat-card__valor">
+              <span id="statFeedbacks" class="stat-card__numero">0</span>
+              <span class="stat-card__chip stat-card__chip--ok">Hoje</span>
+            </div>
+          </article>
+
+          <article class="stat-card">
+            <div class="stat-card__topo">
+              <p class="stat-card__label">Conversão de Vendas</p>
+              <span class="material-symbols-outlined stat-card__icone">payments</span>
+            </div>
+            <div class="stat-card__valor">
+              <span id="statConversao" class="stat-card__numero">0%</span>
+            </div>
+          </article>
+        </div>
+
+        <div class="secao-topo">
+          <h3 class="secao-titulo">Alunos que finalizaram a aula</h3>
+          <div class="secao-acoes">
+            <label class="filtro">
+              <span>Filtrar Mês</span>
+              <select id="filtroMesPos" class="filtro__select">
+                <option value="todos">Todos os meses</option>
+                <option value="01">Janeiro</option>
+                <option value="02">Fevereiro</option>
+                <option value="03">Março</option>
+                <option value="04">Abril</option>
+                <option value="05">Maio</option>
+                <option value="06">Junho</option>
+                <option value="07">Julho</option>
+                <option value="08">Agosto</option>
+                <option value="09">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezembro</option>
+              </select>
+            </label>
+            <button id="btnAtualizarPos" class="btn btn--primario">
+                <span class="material-symbols-outlined">sync</span> Atualizar
+            </button>
+          </div>
+        </div>
+
+        <!-- Tabela seguindo o padrão tabela-card -->
+        <section class="tabela-card">
+          <div class="tabela-scroll">
+            <table class="tabela">
+              <thead>
+                <tr>
+                  <th>Aluno / Data Aula</th>
+                  <th>Presença</th>
+                  <th>Ações de Contato</th>
+                  <th>Status Follow-up</th>
+                </tr>
+              </thead>
+              <tbody id="listaPosAula">
+                <tr><td colspan="4" class="tabela__vazio">Carregando alunos...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="../js/guardas.js"></script>
+  <script type="module" src="../js/pos-aula.js"></script>
+</body>
+</html>

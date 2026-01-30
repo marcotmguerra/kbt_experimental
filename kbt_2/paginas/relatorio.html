@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="pt-br" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Relatórios e Estatísticas — SAE</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/admin.css" />
+  
+  <!-- Bibliotecas para Gráficos e PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    .grid-relatorios { display: grid; grid-template-columns: 1fr; gap: 20px; margin-top: 20px; }
+    @media (min-width: 1024px) { .grid-relatorios { grid-template-columns: 1fr 1fr; } }
+    .chart-container { background: #fff; padding: 20px; border-radius: 16px; border: 1px solid var(--borda); height: 300px; position: relative; }
+    .btn-export { background: #111; color: #fff; }
+  </style>
+</head>
+
+<body class="tema-claro">
+  <div class="app">
+    <aside class="sidebar">
+      <!-- Mesma Sidebar do Admin -->
+      <div class="sidebar__conteudo">
+        <div class="brand">
+          <div class="brand__icone"><img src="../img/KBT_logo2.png" alt="Logo" class="logo-icon"></div>
+          <div class="brand__texto">
+            <h1 class="brand__titulo">SAE</h1>
+            <p class="brand__subtitulo">Sistema de aula experimental</p>
+          </div>
+        </div>
+        <nav class="menu">
+          <a class="menu__item" href="admin.html"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
+          <a class="menu__item" href="agendamentos.html"><span class="material-symbols-outlined">calendar_today</span><span>Agendamentos</span></a>
+          <a class="menu__item" href="pos-aula.html"><span class="material-symbols-outlined">forum</span><span>Pós-Aula</span></a>
+          <a class="menu__item menu__item--ativo" href="relatorios.html"><span class="material-symbols-outlined">analytics</span><span>Relatórios</span></a>
+          <div class="menu__rodape">
+            <button id="btnSair" class="menu__item menu__item--botao"><span class="material-symbols-outlined">logout</span><span>Sair</span></button>
+            <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="main" id="conteudoRelatorio">
+      <header class="topbar">
+        <div class="topbar__esquerda">
+          <h2 class="topbar__titulo">Relatórios Estratégicos</h2>
+        </div>
+        <div class="topbar__direita">
+    <button id="btnExportarDiario" class="btn btn--secundario">Relatório Diário</button>
+     <button id="btnExportarSemanal" class="btn btn--secundario">
+        <span class="material-symbols-outlined">compare_arrows</span> Relatório Semanal
+    </button>
+    <button id="btnExportarMensal" class="btn btn--primario">Exportar PDF Mensal</button>
+    
+</div>
+      </header>
+
+      <section class="conteudo">
+        <!-- Filtros -->
+        <div class="secao-topo">
+          <div class="secao-acoes">
+            <label class="filtro">
+              <span>Mês de Análise</span>
+              <select id="mesRelatorio" class="filtro__select">
+                <option value="01">Janeiro</option>
+                <option value="02">Fevereiro</option>
+                <option value="03">Março</option>
+                <option value="04">Abril</option>
+                <option value="05">Maio</option>
+                <option value="06">Junho</option>
+                <option value="07">Julho</option>
+                <option value="08">Agosto</option>
+                <option value="09">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezembro</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <!-- Cards de Resumo -->
+        <div class="stats">
+          <article class="stat-card">
+            <p class="stat-card__label">Aulas no Mês</p>
+            <div class="stat-card__valor"><span id="relTotalMes" class="stat-card__numero">0</span></div>
+          </article>
+          <article class="stat-card">
+            <p class="stat-card__label">Aulas nesta Semana</p>
+            <div class="stat-card__valor"><span id="relTotalSemana" class="stat-card__numero">0</span></div>
+          </article>
+          <article class="stat-card">
+            <p class="stat-card__label">Taxa de Presença</p>
+            <div class="stat-card__valor"><span id="relTaxaPresenca" class="stat-card__numero">0%</span></div>
+          </article>
+        </div>
+
+        <!-- Gráficos -->
+        <div class="grid-relatorios">
+          <div class="chart-container">
+            <p class="stat-card__label">Aulas por Programa</p>
+            <canvas id="chartProgramas"></canvas>
+          </div>
+          <div class="chart-container">
+            <p class="stat-card__label">Distribuição por Sexo</p>
+            <canvas id="chartSexo"></canvas>
+          </div>
+          <div class="chart-container">
+            <p class="stat-card__label">Faixa Etária</p>
+            <canvas id="chartIdade"></canvas>
+          </div>
+          <div class="chart-container">
+            <p class="stat-card__label">Origem do Público (Como conheceu)</p>
+            <canvas id="chartOrigem"></canvas>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="../js/guardas.js"></script>
+<script type="module" src="../js/relatorio.js"></script>
+</body>
+</html>
