@@ -17,6 +17,6 @@
 
 5 - colocar um opcao do admin marcar se o coach levou o aluno na recepcao 
 
-6 - colocar o icone de relatorio no menu
+6 - colocar o icone de relatorio no menu - OK
 
 

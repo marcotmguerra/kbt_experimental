@@ -33,12 +33,13 @@
           <a class="menu__item" href="/paginas/admin.html"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
           <a class="menu__item" href="/paginas/admin-coachs.html"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
           <a class="menu__item" href="/paginas/agendamentos.html"><span class="material-symbols-outlined">calendar_today</span><span>agendamentos</span></a>
-
+          <a class="menu__item" href="/paginas/pos-aula.html"><i data-lucide="repeat-2"></i><span>Pos-aula</span></a>
+          <a class="menu__item" href="/paginas/relatorio.html"><i data-lucide="chart-line"></i><span>Relatórios</span></a>
           <div class="menu__rodape">
             
 
             <button id="btnSair" class="menu__item menu__item--botao" type="button">
-              <span class="material-symbols-outlined">logout</span><span>Sair</span>
+              <i data-lucide="log-out"></i><span></span><span>Sair</span>
             </button>
 
             <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p> <!--colocar o usuario aqui-->
@@ -66,7 +67,7 @@
           <article class="stat-card">
             <div class="stat-card__topo">
               <p class="stat-card__label">Inscrições pendentes</p> <!--Verificar o nome-->
-              <span class="material-symbols-outlined stat-card__icone">pending_actions</span>
+              <i data-lucide="clipboard-clock"></i><span>Ações pendentes</span>
             </div>
             <div class="stat-card__valor">
               <span id="statPendentes" class="stat-card__numero">—</span>
@@ -88,7 +89,7 @@
           <article class="stat-card">
             <div class="stat-card__topo">
               <p class="stat-card__label">Inscrições do dia</p> <!--Verificar o nome-->
-              <span class="material-symbols-outlined stat-card__icone">description</span>
+              <i data-lucide="book-text"></i><span>Descrição</span>
             </div>
             <div class="stat-card__valor">
               <span id="statHoje" class="stat-card__numero">—</span>
@@ -120,8 +121,8 @@
             </label>
 
             <button id="btnAtualizar" class="btn btn--primario" type="button">
-              <span class="material-symbols-outlined">sync</span>
-              Atualizar
+              <i data-lucide="calendar-sync"></i><span>Atualizar</span>
+              
             </button>
           </div>
         </div>
@@ -149,10 +150,10 @@
             <p id="paginacaoInfo" class="tabela-rodape__texto">—</p>
             <div class="tabela-rodape__botoes">
               <button id="btnPagAnterior" class="icon-btn icon-btn--borda" type="button">
-                <span class="material-symbols-outlined">chevron_left</span>
+                <i data-lucide="arrow-left-from-line"></i><span>Voltar</span>
               </button>
               <button id="btnPagProxima" class="icon-btn icon-btn--borda" type="button">
-                <span class="material-symbols-outlined">chevron_right</span>
+                <i data-lucide="arrow-right-from-line"></i><span>Avançar</span>
               </button>
             </div>
           </footer>
@@ -171,6 +172,12 @@
   <script type="module" src="../js/guardas.js"></script>
 <script type="module" src="../js/admin.lista.js"></script>
 <script type="module" src="../js/admin.atribuicao.js"></script>
+
+          <!-- LUCIDE -->
+ <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    lucide.createIcons();
+  </script>
 
 </body>
 </html>

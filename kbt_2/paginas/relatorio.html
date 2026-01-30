@@ -37,10 +37,11 @@
           </div>
         </div>
         <nav class="menu">
-          <a class="menu__item" href="admin.html"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
-          <a class="menu__item" href="agendamentos.html"><span class="material-symbols-outlined">calendar_today</span><span>Agendamentos</span></a>
-          <a class="menu__item" href="pos-aula.html"><span class="material-symbols-outlined">forum</span><span>Pós-Aula</span></a>
-          <a class="menu__item menu__item--ativo" href="relatorios.html"><span class="material-symbols-outlined">analytics</span><span>Relatórios</span></a>
+           <a class="menu__item" href="/paginas/admin.html"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
+          <a class="menu__item" href="/paginas/admin-coachs.html"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
+          <a class="menu__item" href="/paginas/agendamentos.html"><span class="material-symbols-outlined">calendar_today</span><span>agendamentos</span></a>
+          <a class="menu__item" href="/paginas/pos-aula.html"><i data-lucide="repeat-2"></i><span>Pos-aula</span></a>
+          <a class="menu__item" href="/paginas/relatorio.html"><i data-lucide="chart-line"></i><span>Relatórios</span></a>
           <div class="menu__rodape">
             <button id="btnSair" class="menu__item menu__item--botao"><span class="material-symbols-outlined">logout</span><span>Sair</span></button>
             <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p>
@@ -129,5 +130,12 @@
 
   <script type="module" src="../js/guardas.js"></script>
 <script type="module" src="../js/relatorio.js"></script>
+
+<!-- LUCIDE -->
+ <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    lucide.createIcons();
+  </script>
+
 </body>
 </html>

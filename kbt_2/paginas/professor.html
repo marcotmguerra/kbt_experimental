@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+  <!-- REMOVIDO material symbols -->
 
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/professor.css" />
@@ -20,13 +20,13 @@
     <div class="topbar-prof__esquerda">
       <div class="marca">
         <div class="marca__icone">
-          <img src="../img/KBT_logo2.png" alt="Logo KBT" class="logo-icon"> <!--Colocar a logo do kabuto-->
+          <img src="../img/KBT_logo2.png" alt="Logo KBT" class="logo-icon">
         </div>
-        <h2 class="marca__titulo">Painel do Coach</h2>  <!--Mudar o nome-->
+        <h2 class="marca__titulo">Painel do Coach</h2>
       </div>
 
       <div class="busca busca--desktop">
-        <span class="material-symbols-outlined busca__icone">search</span>
+        <i data-lucide="search" class="busca__icone"></i>
         <input id="busca" class="busca__input" type="search" placeholder="Buscar alunos..." />
       </div>
     </div>
@@ -34,14 +34,10 @@
     <div class="topbar-prof__direita">
       <nav class="menu-topo">
         <a class="menu-topo__link menu-topo__link--ativo" href="professor.html">Painel</a>  
-        <!--<a class="menu-topo__link" href="#">Agenda</a> 
-        <a class="menu-topo__link" href="#">Alunos</a>  
-        <a class="menu-topo__link" href="#">Reports</a>  -->
       </nav> 
 
-      
-            <button id="btnSair" class="btn-sair" type="button">
-        <span class="material-symbols-outlined">logout</span>
+      <button id="btnSair" class="btn-sair" type="button">
+        <i data-lucide="log-out"></i>
         <span>Sair</span>
       </button>
     </div>
@@ -51,9 +47,10 @@
     <div class="pagina-prof__conteudo">
       <section class="cabecalho-prof">
         <div class="cabecalho-prof__texto">
-          <h5 id="tituloProfessor" class="cabecalho-prof__titulo">Olá, Coach(a)</h5>  <!--Colocar o nome dele no professor-->
-          <p id="subtituloProfessor" class="cabecalho-prof__subtitulo">Você tem X aulas experimentais para hoje.</p>  <!--Colocar o numero de aulas experimentais no X-->
-            
+          <h5 id="tituloProfessor" class="cabecalho-prof__titulo">Olá, Coach(a)</h5>
+          <p id="subtituloProfessor" class="cabecalho-prof__subtitulo">
+            Você tem X aulas experimentais para hoje.
+          </p>
         </div>
 
         <div class="cabecalho-prof__acoes">
@@ -68,7 +65,7 @@
           </label>
 
           <button id="btnAtualizar" class="btn btn--primario" type="button">
-            <span class="material-symbols-outlined">sync</span>
+            <i data-lucide="refresh-cw"></i>
             Atualizar
           </button>
         </div>
@@ -93,20 +90,26 @@
 
   <nav class="nav-mobile">
     <a class="nav-mobile__item nav-mobile__item--ativo" href="#">
-      <span class="material-symbols-outlined">dashboard</span><span>Dash</span>
+      <i data-lucide="layout-dashboard"></i><span>Dash</span>
     </a>
     <a class="nav-mobile__item" href="#">
-      <span class="material-symbols-outlined">calendar_month</span><span>Agenda</span>
+      <i data-lucide="calendar"></i><span>Agenda</span>
     </a>
     <a class="nav-mobile__item" href="#">
-      <span class="material-symbols-outlined">group</span><span>Alunos</span>
+      <i data-lucide="users"></i><span>Alunos</span>
     </a>
     <a class="nav-mobile__item" href="#">
-      <span class="material-symbols-outlined">settings</span><span>Config</span>
+      <i data-lucide="settings"></i><span>Config</span>
     </a>
   </nav>
 
   <script type="module" src="../js/guardas.js"></script>
   <script type="module" src="../js/professor.painel.js"></script>
+
+  <!-- LUCIDE -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
