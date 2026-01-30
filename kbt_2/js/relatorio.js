@@ -16,15 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("mesRelatorio")?.addEventListener("change", carregarEstatisticas);
     document.getElementById("btnExportarMensal")?.addEventListener("click", () => exportarPDFExecutivo());
     document.getElementById("btnExportarSemanal")?.addEventListener("click", () => exportarPDFSemanal());
-    // Se você tiver o botão diário no HTML:
-    document.getElementById("btnExportarDiario")?.addEventListener("click", () => exportarPDFExecutivo('Diário'));
+    document.getElementById("btnExportarDiario")?.addEventListener("click", () => exportarPDFDiario());
 });
 
 async function carregarEstatisticas() {
     const mes = document.getElementById("mesRelatorio").value;
     
     // Busca todos os dados para permitir comparações temporais
-    const { data, error } = await supabase.from("agendamentos").select("*");
+    const { data, error } = await supabase.from("agendamentos").select("*, profiles(nome)");
 
     if (error) {
         console.error("Erro Supabase:", error);
@@ -108,7 +107,81 @@ function renderizarGraficos(stats) {
     charts.origem = new Chart(document.getElementById('chartOrigem'), cfg(Object.keys(stats.origem), Object.values(stats.origem), 'pie'));
 }
 
-// --- RELATÓRIO SEMANAL COMPARATIVO (NOVO) ---
+// --- RELATÓRIO DIÁRIO (NOVO) ---
+async function exportarPDFDiario() {
+    const hojeStr = new Date().toLocaleDateString('pt-BR');
+    const hojeISO = new Date().toISOString().split('T')[0];
+    
+    // Filtrar aulas de hoje
+    const aulasHoje = todosOsDados.filter(a => a.data_aula && a.data_aula.startsWith(hojeISO));
+
+    const rel = document.createElement("div");
+    rel.style.padding = "30px";
+    rel.style.fontFamily = "'Inter', sans-serif";
+
+    rel.innerHTML = `
+        <div style="text-align: center; border-bottom: 2px solid #400c88; padding-bottom: 15px; margin-bottom: 20px;">
+            <h1 style="margin:0; color:#400c88; font-size: 20px;">Relatório Diário de Atividades</h1>
+            <p style="margin:5px 0; font-size:12px; color:#666;">Data: ${hojeStr}</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+            <div style="background:#f8f9fa; padding:10px; border-radius:8px; text-align:center;">
+                <small style="font-size:9px; text-transform:uppercase;">Total Hoje</small>
+                <h3 style="margin:0;">${aulasHoje.length}</h3>
+            </div>
+            <div style="background:#dcfce7; padding:10px; border-radius:8px; text-align:center;">
+                <small style="font-size:9px; text-transform:uppercase; color:#16a34a;">Confirmados</small>
+                <h3 style="margin:0; color:#16a34a;">${aulasHoje.filter(a => a.status === 'confirmado').length}</h3>
+            </div>
+            <div style="background:#fee2e2; padding:10px; border-radius:8px; text-align:center;">
+                <small style="font-size:9px; text-transform:uppercase; color:#ef4444;">Faltas</small>
+                <h3 style="margin:0; color:#ef4444;">${aulasHoje.filter(a => a.status === 'faltou').length}</h3>
+            </div>
+        </div>
+
+        <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
+            <thead>
+                <tr style="background: #400c88; color: white;">
+                    <th style="padding: 8px; text-align: left;">Hora</th>
+                    <th style="padding: 8px; text-align: left;">Aluno</th>
+                    <th style="padding: 8px; text-align: left;">Programa</th>
+                    <th style="padding: 8px; text-align: left;">Coach</th>
+                    <th style="padding: 8px; text-align: left;">Feedback do Coach</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${aulasHoje.length > 0 ? aulasHoje.map(a => `
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px;">${new Date(a.data_aula).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</td>
+                        <td style="padding: 8px;"><strong>${a.aluno_nome}</strong></td>
+                        <td style="padding: 8px;">${a.tipo_aula || 'Experimental'}</td>
+                        <td style="padding: 8px;">${a.profiles?.nome || '—'}</td>
+                        <td style="padding: 8px; color: #555; font-style: italic;">${a.feedback_coach || 'Sem feedback'}</td>
+                    </tr>
+                `).join('') : '<tr><td colspan="5" style="padding:20px; text-align:center;">Nenhuma aula agendada para hoje.</td></tr>'}
+            </tbody>
+        </table>
+
+        <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; font-size: 9px; color: #999; text-align: center;">
+            Gerado automaticamente pelo Sistema SAE em ${new Date().toLocaleString('pt-BR')}
+        </div>
+    `;
+
+    document.body.appendChild(rel);
+    
+    const opt = {
+        margin: 10,
+        filename: `SAE_Relatorio_Diario_${hojeISO}.pdf`,
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    try { await html2pdf().set(opt).from(rel).save(); } 
+    finally { document.body.removeChild(rel); }
+}
+
+// --- RELATÓRIO SEMANAL COMPARATIVO ---
 async function exportarPDFSemanal() {
     const hoje = new Date();
     const seteDias = new Date(); seteDias.setDate(hoje.getDate() - 7);
@@ -128,7 +201,6 @@ async function exportarPDFSemanal() {
     const rel = document.createElement("div");
     rel.style.padding = "30px";
     rel.style.fontFamily = "'Inter', sans-serif";
-    rel.style.color = "#111";
 
     rel.innerHTML = `
         <div style="text-align: center; border-bottom: 2px solid #400c88; padding-bottom: 15px; margin-bottom: 20px;">
@@ -162,29 +234,21 @@ async function exportarPDFSemanal() {
             <p style="font-size:11px; font-weight:bold; text-align:center; margin-bottom:10px;">DISTRIBUIÇÃO DE PROGRAMAS</p>
             <canvas id="pdfBarraProgramas"></canvas>
         </div>
-
-        <div style="margin-top: 40px; border-top: 1px solid #eee; padding-top: 10px; font-size: 10px; color: #999; text-align: center;">
-            Sistema de Aula Experimental - Relatório Automático
-        </div>
     `;
 
     document.body.appendChild(rel);
 
-    // Renderizar Gráficos para o PDF
     const cores = ['#400c88', '#16a34a', '#ef4444', '#f59e0b', '#137fec'];
-    
     new Chart(document.getElementById('pdfPizzaSexo'), {
         type: 'pie',
         data: { labels: Object.keys(statsAtual.sexo), datasets: [{ data: Object.values(statsAtual.sexo), backgroundColor: cores }] },
         options: { responsive: false, animation: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } } }
     });
-
     new Chart(document.getElementById('pdfPizzaOrigem'), {
         type: 'doughnut',
         data: { labels: Object.keys(statsAtual.origem), datasets: [{ data: Object.values(statsAtual.origem), backgroundColor: cores }] },
         options: { responsive: false, animation: false, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 9 } } } } }
     });
-
     new Chart(document.getElementById('pdfBarraProgramas'), {
         type: 'bar',
         data: { labels: Object.keys(statsAtual.programas), datasets: [{ data: Object.values(statsAtual.programas), backgroundColor: '#400c88' }] },
@@ -198,14 +262,11 @@ async function exportarPDFSemanal() {
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    try {
-        await html2pdf().set(opt).from(rel).save();
-    } finally {
-        document.body.removeChild(rel);
-    }
+    try { await html2pdf().set(opt).from(rel).save(); } 
+    finally { document.body.removeChild(rel); }
 }
 
-// --- RELATÓRIO MENSAL EXECUTIVO (EXISTENTE) ---
+// --- RELATÓRIO MENSAL EXECUTIVO ---
 async function exportarPDFExecutivo() {
     const mesRef = document.getElementById("mesRelatorio").value;
     const nomeMes = document.getElementById("mesRelatorio").options[document.getElementById("mesRelatorio").selectedIndex].text;

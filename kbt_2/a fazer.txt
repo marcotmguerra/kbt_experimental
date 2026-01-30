@@ -11,12 +11,13 @@
 3.1 - btn enviar mensagem de avaliação inicial no wpp pos aula exporimental ( com status)
 3.2 - btn de enviar formulario por aula experimental ( com status)
 3.3 - se a pessoa nao responder, o card fica com uma etiqueta/tarja pendente - aguarda status
+3.4 - COlocar um forms para isso? Ou pegar o existe e anexar as respostas?
 
 
-4 - Colocar um campo para o professor escrever um feedback POS aula ( conversa com aula. Ex: aluno preguiçoso, animado)
-4.1 - retirar a confirmacao de presença do aluno pelo coach e colocar no painel do admin
+4 - Colocar um campo para o professor escrever um feedback POS aula ( conversa com aula. Ex: aluno preguiçoso, animado) AJUSTAR
 
-5 - colocar um opcao do admin marcar se o coach levou o aluno na recepcao 
+
+5 - colocar um opcao do admin marcar se o coach levou o aluno na recepcao - AJUSTAR
 
 
 
