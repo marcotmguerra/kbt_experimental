@@ -1,3 +1,19 @@
-trocos os emojis por lucide
+1 - trocos os emojis por lucide
 
 <script src="https://unpkg.com/lucide@latest"></script>
+
+2 - Controle de agendamentos por mes e por semana
+2.1 - Criar relatorio diario, semanal e mensal das aulas com estatistica ( idade, programa escolhido)
+2.2 - criar uma aba para relatorios/estatisticos ( com filtro)
+
+3 - Aba do pos aula - so chega o card do aluno apos a confirmacao de presença pela recepcao ou falta
+3.1 - btn enviar mensagem de avaliação inicial no wpp pos aula exporimental ( com status)
+3.2 - btn de enviar formulario por aula experimental ( com status)
+3.3 - se a pessoa nao responder, o card fica com uma etiqueta/tarja pendente - aguarda status
+
+4 - Colocar um campo para o professor escrever um feedback POS aula ( conversa com aula. Ex: aluno preguiçoso, animado)
+4.1 - retirar a confirmacao de presença do aluno pelo coach e colocar no painel do admin
+
+5 - colocar um opcao do admin marcar se o coach levou o aluno na recepcao 
+
+
