@@ -22,61 +22,46 @@ async function carregarPosAula() {
         return;
     }
 
-    lista.innerHTML = data.map(aluno => {
-        const isPendente = !aluno.avaliacao_enviada || !aluno.feedback_enviado;
+        // status do relatório na tabela
         
-        return `
-            <tr>
-                <td>
-                    <div class="aluno">
-                        <span class="aluno__nome">${aluno.aluno_nome}</span>
-                        <span class="aluno__sub">${formatarDataBR(aluno.data_aula)}</span>
-                        <!-- EXIBIÇÃO DO TIPO DE AULA -->
-                        <span style="font-size: 10px; font-weight: 800; color: var(--primario); text-transform: uppercase; background: rgba(64, 12, 136, 0.08); padding: 2px 6px; border-radius: 4px; width: fit-content; margin-top: 4px;">
-                            ${aluno.tipo_aula || 'Experimental'}
-                        </span>
-                    </div>
-                </td>
-                <td>
-                    <span class="status-pill status-${aluno.status}">${aluno.status}</span><br>
-                    <small style="font-weight:bold; color:${aluno.levou_recepcao ? '#16a34a' : '#ef4444'}">
-                        ${aluno.levou_recepcao ? 'Foi na recepção' : 'Não foi na recepção'}
-                    </small>
-                </td>
-                <td style="max-width:200px;">
-                    <div style="max-height:60px; overflow-y:auto; border:1px solid #eee; padding:8px; border-radius:8px; background:#f8fafc; font-size:12px; line-height:1.4;">
-                        ${aluno.feedback_coach ? aluno.feedback_coach : '<em style="color:#999;">Aguardando coach...</em>'}
-                    </div>
-                </td>
-                <td>
-                    <div style="display:flex; gap:8px; margin-bottom:8px;">
-                        <button class="btn-wpp ${aluno.avaliacao_enviada ? 'btn-wpp--enviado' : ''}" 
-                                onclick="window.enviarMensagem('${aluno.id}', 'avaliacao', '${aluno.aluno_whatsapp}', '${aluno.aluno_nome}')">
-                            <span class="material-symbols-outlined" style="font-size:18px;">star</span>
-                        </button>
-                        <button class="btn-wpp ${aluno.feedback_enviado ? 'btn-wpp--enviado' : ''}" 
-                                onclick="window.enviarMensagem('${aluno.id}', 'feedback', '${aluno.aluno_whatsapp}', '${aluno.aluno_nome}')">
-                            <span class="material-symbols-outlined" style="font-size:18px;">assignment</span>
-                        </button>
-                    </div>
-                    <span class="tag-status-pos ${isPendente ? 'tag-status-pos--pendente' : 'tag-status-pos--ok'}">
-                        ${isPendente ? 'Aguardando' : 'Finalizado'}
-                    </span>
-                </td>
-                <td>
-                    <button class="icon-btn" onclick="window.arquivarAluno('${aluno.id}')" 
-                            style="background: #f1f5f9; color: #64748b;" title="Arquivar">
-                        <span class="material-symbols-outlined">archive</span>
-                    </button>
-                </td>
-                <td class="tabela__acao">
-                    <a href="detalhe.html?id=${aluno.id}" class="icon-btn" 
-                       style="background: var(--primario); color: white;">
-                        <span class="material-symbols-outlined">visibility</span>
-                    </a>
-                </td>
-            </tr>`;
-    }).join('');
+    lista.innerHTML = data.map(aluno => {
+    const isPendente = !aluno.avaliacao_enviada || !aluno.feedback_enviado;
+    const relatorioStatus = aluno.relatorio_vivencia 
+        ? `<span style="color:#16a34a; font-weight:bold;">✅ Relatório OK</span>` 
+        : `<span style="color:#ef4444; font-weight:bold;">⚠️ Sem Relatório</span>`;
+    
+    return `
+        <tr>
+            <td>
+                <div class="aluno">
+                    <span class="aluno__nome">${aluno.aluno_nome}</span>
+                    <span class="aluno__sub">${formatarDataBR(aluno.data_aula)}</span>
+                    <span class="tipo-aula-tag">${aluno.tipo_aula || 'Experimental'}</span>
+                </div>
+            </td>
+            <td>
+                <span class="status-pill status-${aluno.status}">${aluno.status}</span><br>
+                <small style="color:${aluno.levou_recepcao ? '#16a34a' : '#ef4444'}">
+                    ${aluno.levou_recepcao ? '✓ Recepção OK' : '✗ S/ Recepção'}
+                </small>
+            </td>
+            <td style="max-width:200px;">
+                <div class="feedback-box-pos">
+                    ${relatorioStatus}<br>
+                    <small>${aluno.relatorio_vivencia?.recomendacao || ''}</small>
+                </div>
+            </td>
+            <td>
+                <div style="display:flex; gap:8px; margin-bottom:8px;">
+                    <button class="btn-wpp ${aluno.avaliacao_enviada ? 'btn-wpp--enviado' : ''}" onclick="window.enviarMensagem('${aluno.id}', 'avaliacao', '${aluno.aluno_whatsapp}', '${aluno.aluno_nome}')"><span class="material-symbols-outlined">star</span></button>
+                    <button class="btn-wpp ${aluno.feedback_enviado ? 'btn-wpp--enviado' : ''}" onclick="window.enviarMensagem('${aluno.id}', 'feedback', '${aluno.aluno_whatsapp}', '${aluno.aluno_nome}')"><span class="material-symbols-outlined">assignment</span></button>
+                </div>
+                <span class="tag-status-pos ${isPendente ? 'tag-status-pos--pendente' : 'tag-status-pos--ok'}">${isPendente ? 'Aguardando' : 'Finalizado'}</span>
+            </td>
+            <td><button class="icon-btn" onclick="window.arquivarAluno('${aluno.id}')"><span class="material-symbols-outlined">archive</span></button></td>
+            <td class="tabela__acao"><a href="detalhe.html?id=${aluno.id}" class="icon-btn" style="background:var(--primario); color:white;"><span class="material-symbols-outlined">visibility</span></a></td>
+        </tr>`;
+}).join('');
 }
 
 // Funções de apoio (Arquivar e Enviar Mensagem)

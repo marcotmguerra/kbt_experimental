@@ -86,9 +86,10 @@ body {
   background: var(--card);
   border: 1px solid rgba(0,0,0,.06);
   border-radius: 18px;
-  padding: 20px;
+  padding: 8px;
   box-shadow: 0 10px 30px rgba(0,0,0,.04);
-  margin-bottom: 20px;
+  margin-bottom: 12px;
+  
 }
 
 /* Card especial de Venda Admin */
@@ -155,9 +156,20 @@ body {
 .admin-botoes-row .btn { flex: 1; }
 
 .check-recepcao {
-  display: flex; align-items: center; justify-content: center; gap: 10px;
-  background: #f0f2f4; padding: 12px; border-radius: 14px;
-  font-weight: 800; font-size: 13px; cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  background: var(--bg-claro, #f0f2f4);
+  padding: 6px 12px;          /* ↓ menos alto */
+  border-radius: 12px;        /* combina com cards/botões */
+  
+  font-weight: 700;           /* menos “pesado” */
+  font-size: 12.5px;          /* mais discreto */
+  line-height: 1.2;
+
+  cursor: pointer;
 }
 
 /* Feedback e Formulário */

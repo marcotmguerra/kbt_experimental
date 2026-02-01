@@ -9,6 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/detalhe.css" />
+  <!-- Biblioteca para PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
   <header class="topbar-det">
@@ -27,13 +29,7 @@
   <main class="pagina-det">
     <div class="pagina-det__conteudo">
       
-      <!-- PAINEL ADMIN: MATRÍCULA -->
-      <section id="secaoAdminVenda" class="card card--venda-admin">
-        <div class="admin-venda-wrapper">
-          <p>Aluno realizou a matrícula (Venda)?</p>
-          <input type="checkbox" id="checkMatriculado">
-        </div>
-      </section>
+      
 
       <section class="hero">
         <div class="hero__info">
@@ -48,12 +44,18 @@
           <div class="acoes">
             <a id="btnWhatsapp" class="btn btn--primario" target="_blank"><span class="material-symbols-outlined">chat</span> WhatsApp</a>
             
-            <!-- PAINEL ADMIN: PRESENÇA -->
-            <div id="containerAdminAcoes" class="admin-presenca-area">
+            <div id="containerAdminAcoes" class="admin-presenca-area" style="display: none;">
               <div class="admin-botoes-row">
                 <button id="btnConfirmar" class="btn btn--ok">Confirmar Presença</button>
                 <button id="btnFaltou" class="btn btn--erro">Marcar Falta</button>
               </div>
+              <!-- PAINEL ADMIN: MATRÍCULA -->
+      <section id="secaoAdminVenda" class="card card--venda-admin" style="display: none;">
+        <div class="admin-venda-wrapper">
+          <p>Aluno realizou a matrícula?</p>
+          <input type="checkbox" id="checkMatriculado">
+        </div>
+      </section>
               <label class="check-recepcao">
                 <input type="checkbox" id="checkRecepcao"> Coach levou o aluno à recepção?
               </label>
@@ -62,29 +64,55 @@
         </div>
       </section>
 
-      <!-- SEÇÃO DE FEEDBACK -->
+      <!-- RELATÓRIO TÉCNICO (VIVÊNCIA) -->
       <section class="card card-feedback">
-        <h3 class="card-feedback-titulo">
-          <span class="material-symbols-outlined">rate_review</span> Relatório da Aula
-        </h3>
-        
-        <!-- O PROFESSOR ESCREVE AQUI -->
-        <div id="containerFeedbackCoach">
-          <textarea id="txtFeedbackCoach" placeholder="Descreva como foi a aula..."></textarea>
-          <button id="btnSalvarFeedback" class="btn btn--primario btn-full">Salvar Relatório de Aula</button>
+        <div class="card__topo">
+          <h3 style="margin:0; display: flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined">analytics</span> Relatório de Vivência Kabuto
+          </h3>
         </div>
 
-        <!-- O ADMIN LÊ AQUI -->
-        <div id="containerFeedbackAdmin">
-          <div class="feedback-admin-box">
-            <p id="pFeedbackTexto">Aguardando feedback do coach...</p>
+        <!-- SELETOR (COACH) -->
+        <div id="seletorCategoria" style="margin: 20px 0; display: none;">
+          <p style="font-weight: 800; font-size: 13px; margin-bottom: 10px;">Categoria do Aluno:</p>
+          <div style="display: flex; gap: 10px;">
+            <button type="button" class="btn btn--secundario" id="btnRelAdulto">Adulto</button>
+            <button type="button" class="btn btn--secundario" id="btnRelKids">Kids</button>
           </div>
+        </div>
+
+        <!-- FORMULÁRIO (COACH) -->
+        <div id="containerFeedbackCoach" style="display: none;">
+          <form id="formRelatorioVivencia">
+            <div id="camposRelatorio"></div>
+            
+            <p style="font-weight: 800; margin-top: 20px; font-size: 14px;">Tradução Prática (Insight Automático):</p>
+            <textarea id="txtTraducaoPratica" placeholder="O sistema sugerirá um texto baseado na menor nota..."></textarea>
+            
+            <div id="recomendacaoArea" style="margin-top: 20px; padding: 15px; background: #f0f2f4; border-radius: 12px;">
+                <p style="font-weight:800; margin:0; font-size:11px; color:#666; text-transform: uppercase;">Recomendação baseada na média:</p>
+                <div id="textoRecomendacaoAuto" style="font-size: 16px; font-weight: 900; color: var(--primario); margin-top: 5px;">Selecione as notas...</div>
+            </div>
+
+            <button type="submit" class="btn btn--primario" style="width: 100%; margin-top: 20px;">Salvar Relatório Técnico</button>
+          </form>
+        </div>
+
+        <!-- LEITURA E PDF (ADMIN) -->
+        <div id="containerFeedbackAdmin" style="display: none;">
+            <button id="btnExportarPDFVivencia" class="btn btn--secundario" style="width: 100%; margin-bottom: 15px; border: 1px solid var(--primario); color: var(--primario);">
+                <span class="material-symbols-outlined">picture_as_pdf</span> Exportar Relatório para Aluno/Pais
+            </button>
+            <div id="leituraRelatorio" class="feedback-admin-box"></div>
         </div>
       </section>
 
+      <!-- No final do detalhe.html -->
       <section class="card">
-        <h3 class="card-feedback-titulo">Dados do Agendamento</h3>
-        <div id="detFormRaw" class="lista-detalhes"></div>
+          <h3 class="card-feedback-titulo">Informações do Agendamento (Forms)</h3>
+          <div id="detFormRaw" class="lista-detalhes">
+          <!-- O JS preenche aqui -->
+          </div>
       </section>
     </div>
   </main>
