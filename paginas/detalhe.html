@@ -4,120 +4,185 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ficha do Aluno — SAE</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+  
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/detalhe.css" />
-  <!-- Biblioteca para PDF -->
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body>
-  <header class="topbar-det">
-    <div class="topbar-det__esquerda">
-      <a href="javascript:history.back()" class="link-voltar"><span class="material-symbols-outlined">arrow_back</span> Voltar</a>
-      <div class="marca">
-        <img src="../img/KBT_logo2.png" alt="Logo" class="logo-icon">
-        <h2 class="marca__titulo">Ficha do Aluno</h2>
-      </div>
-    </div>
-    <div class="topbar-det__direita">
-      <span id="badgeStatus" class="status-pill">Pendente</span>
-    </div>
-  </header>
 
-  <main class="pagina-det">
-    <div class="pagina-det__conteudo">
-      
-      
-
-      <section class="hero">
-        <div class="hero__info">
-          <h1 id="detAluno" class="hero__nome">Carregando...</h1>
-          <div class="hero__grid">
-            <div class="mini-card"><p class="mini-card__label">Data</p><p id="detData">—</p></div>
-            <div class="mini-card"><p class="mini-card__label">Tipo</p><p id="detTipo">—</p></div>
-            <div class="mini-card"><p class="mini-card__label">WhatsApp</p><p id="detWhatsapp">—</p></div>
-            <div class="mini-card"><p class="mini-card__label">Status</p><p id="detStatus">—</p></div>
+  <div class="layout-wrapper">
+    
+    <aside class="sidebar">
+      <div class="sidebar__conteudo">
+        <div class="brand">
+          <div class="brand__icone">
+            <img src="../img/KBT_logo2.png" alt="Logo KBT" class="logo-icon">  
           </div>
-
-          <div class="acoes">
-            <a id="btnWhatsapp" class="btn btn--primario" target="_blank"><span class="material-symbols-outlined">chat</span> WhatsApp</a>
-            
-            <div id="containerAdminAcoes" class="admin-presenca-area" style="display: none;">
-              <div class="admin-botoes-row">
-                <button id="btnConfirmar" class="btn btn--ok">Confirmar Presença</button>
-                <button id="btnFaltou" class="btn btn--erro">Marcar Falta</button>
-              </div>
-              <!-- PAINEL ADMIN: MATRÍCULA -->
-      <section id="secaoAdminVenda" class="card card--venda-admin" style="display: none;">
-        <div class="admin-venda-wrapper">
-          <p>Aluno realizou a matrícula?</p>
-          <input type="checkbox" id="checkMatriculado">
-        </div>
-      </section>
-              <label class="check-recepcao">
-                <input type="checkbox" id="checkRecepcao"> Coach levou o aluno à recepção?
-              </label>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- RELATÓRIO TÉCNICO (VIVÊNCIA) -->
-      <section class="card card-feedback">
-        <div class="card__topo">
-          <h3 style="margin:0; display: flex; align-items: center; gap: 8px;">
-            <span class="material-symbols-outlined">analytics</span> Relatório de Vivência Kabuto
-          </h3>
-        </div>
-
-        <!-- SELETOR (COACH) -->
-        <div id="seletorCategoria" style="margin: 20px 0; display: none;">
-          <p style="font-weight: 800; font-size: 13px; margin-bottom: 10px;">Categoria do Aluno:</p>
-          <div style="display: flex; gap: 10px;">
-            <button type="button" class="btn btn--secundario" id="btnRelAdulto">Adulto</button>
-            <button type="button" class="btn btn--secundario" id="btnRelKids">Kids</button>
+          <div class="brand__texto">
+            <h1 class="brand__titulo">SAE</h1>
+            <p class="brand__subtitulo">Sistema de aula experimental</p>
           </div>
         </div>
 
-        <!-- FORMULÁRIO (COACH) -->
-        <div id="containerFeedbackCoach" style="display: none;">
-          <form id="formRelatorioVivencia">
-            <div id="camposRelatorio"></div>
-            
-            <p style="font-weight: 800; margin-top: 20px; font-size: 14px;">Tradução Prática (Insight Automático):</p>
-            <textarea id="txtTraducaoPratica" placeholder="O sistema sugerirá um texto baseado na menor nota..."></textarea>
-            
-            <div id="recomendacaoArea" style="margin-top: 20px; padding: 15px; background: #f0f2f4; border-radius: 12px;">
-                <p style="font-weight:800; margin:0; font-size:11px; color:#666; text-transform: uppercase;">Recomendação baseada na média:</p>
-                <div id="textoRecomendacaoAuto" style="font-size: 16px; font-weight: 900; color: var(--primario); margin-top: 5px;">Selecione as notas...</div>
-            </div>
-
-            <button type="submit" class="btn btn--primario" style="width: 100%; margin-top: 20px;">Salvar Relatório Técnico</button>
-          </form>
-        </div>
-
-        <!-- LEITURA E PDF (ADMIN) -->
-        <div id="containerFeedbackAdmin" style="display: none;">
-            <button id="btnExportarPDFVivencia" class="btn btn--secundario" style="width: 100%; margin-bottom: 15px; border: 1px solid var(--primario); color: var(--primario);">
-                <span class="material-symbols-outlined">picture_as_pdf</span> Exportar Relatório para Aluno/Pais
+        <nav class="menu">
+          <a class="menu__item" href="/paginas/admin.html"><span class="material-symbols-outlined">dashboard</span><span>Painel</span></a>
+          <a class="menu__item" href="/paginas/admin-coachs.html"><span class="material-symbols-outlined">groups</span><span>Coaches</span></a>
+          <a class="menu__item" href="/paginas/agendamentos.html"><span class="material-symbols-outlined">calendar_today</span><span>Agendamentos</span></a>
+          <a class="menu__item" href="/paginas/pos-aula.html"><i data-lucide="repeat-2"></i><span>Pós-aula</span></a>
+          <a class="menu__item" href="/paginas/relatorio.html"><i data-lucide="chart-line"></i><span>Relatórios</span></a>
+          
+          <div class="menu__rodape">
+            <button id="btnSair" class="menu__item menu__item--botao" type="button">
+              <i data-lucide="log-out"></i><span>Sair</span>
             </button>
-            <div id="leituraRelatorio" class="feedback-admin-box"></div>
-        </div>
-      </section>
 
-      <!-- No final do detalhe.html -->
-      <section class="card">
-          <h3 class="card-feedback-titulo">Informações do Agendamento (Forms)</h3>
-          <div id="detFormRaw" class="lista-detalhes">
-          <!-- O JS preenche aqui -->
+            <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p> 
           </div>
-      </section>
-    </div>
-  </main>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      
+      <header class="topbar-dashboard">
+        <div class="breadcrumbs">
+           <a href="javascript:history.back()" class="link-voltar">
+             <span class="material-symbols-outlined">arrow_back</span> Voltar / Alunos / Ficha Técnica
+           </a>
+        </div>
+        
+      </header>
+
+      <div class="dashboard-container">
+        
+        <section class="profile-header-card">
+          <div class="profile-info">
+           
+             <div>
+               <h1 id="detAluno">Carregando...</h1>
+               <div class="profile-meta">
+                 <span class="material-symbols-outlined">call</span> <span id="detWhatsapp">—</span>
+                 <span class="dot-separator">•</span>
+                 <span class="material-symbols-outlined">calendar_today</span> <span id="detData">—</span>
+               </div>
+             </div>
+          </div>
+          
+        </section>
+
+        <div class="dashboard-grid">
+          
+          <div class="col-left">
+            <div class="card card-mini-resumo">
+                <div class="data-row-compact">
+                  <span class="label-mini">TIPO</span>
+                  <strong id="detTipo">—</strong>
+                </div>
+                <div class="data-row-compact">
+                  <span class="label-mini">STATUS</span>
+                  <div class="profile-status">
+            <span id="badgeStatus" class="status-pill">Pendente</span>
+            
+          </div>
+                </div>
+            </div>
+
+            <div class="card card-section card-forms-container">
+               <h3><span class="material-symbols-outlined">assignment</span> Questionário (Forms)</h3>
+               <div id="detFormRaw" class="lista-detalhes-vertical">
+               </div>
+            </div>
+          </div>
+
+          <div class="col-center">
+             <section class="card card-main-display">
+                <div class="card-header">
+                  <h3><span class="material-symbols-outlined">analytics</span> Avaliação Técnica</h3>
+                  <span class="tag-version">HOJE</span>
+                </div>
+
+                <div id="seletorCategoria" style="margin: 20px 0; display: none;">
+                  <p class="label-input">Categoria do Aluno:</p>
+                  <div class="toggle-buttons">
+                    <button type="button" class="btn-toggle" id="btnRelAdulto">Adulto</button>
+                    <button type="button" class="btn-toggle" id="btnRelKids">Kids</button>
+                  </div>
+                </div>
+
+                <div id="containerFeedbackCoach" style="display: none;">
+                  <form id="formRelatorioVivencia">
+                    <div id="camposRelatorio" class="grid-notas"></div>
+                    
+                    <div class="insight-area">
+                        <p class="label-input">Coach Insight (Automático):</p>
+                        <textarea id="txtTraducaoPratica" placeholder="O sistema sugerirá..."></textarea>
+                    </div>
+
+                    <div id="recomendacaoArea" class="rec-box">
+                        <p>RECOMENDAÇÃO SUGERIDA</p>
+                        <div id="textoRecomendacaoAuto">Selecione as notas...</div>
+                    </div>
+
+                    <button type="submit" class="btn btn--primario btn-full">Salvar Relatório</button>
+                  </form>
+                </div>
+
+                <div id="containerFeedbackAdmin" style="display: none;">
+                    <button id="btnExportarPDFVivencia" class="btn btn--secundario btn-full">
+                        <span class="material-symbols-outlined">picture_as_pdf</span> Exportar PDF
+                    </button>
+                    <div id="leituraRelatorio" class="feedback-admin-box"></div>
+                </div>
+             </section>
+          </div>
+
+          <div class="col-right">
+            <div class="card card-section highlight-card">
+              <h3><span class="material-symbols-outlined">bolt</span> Gestão da Sessão</h3>
+              
+              <div class="acoes-buttons-stack">
+                <a id="btnWhatsapp" class="btn btn--whatsapp" target="_blank">
+                  <span class="material-symbols-outlined">chat</span> WhatsApp
+                </a>
+
+                <div id="containerAdminAcoes" class="admin-stack" style="display: none;">
+                    <div class="row-buttons">
+                      <button id="btnConfirmar" class="btnConfirmar">Confirmar</button>
+                      <button id="btnFaltou" class="btn btn--erro">Faltou</button>
+                    </div>
+                    
+                    <label class="check-recepcao-styled">
+                        <input type="checkbox" id="checkRecepcao"> 
+                        <span>Levou à recepção?</span>
+                    </label>
+
+                    <section id="secaoAdminVenda" class="card-warning" style="display: none;">
+                        <div class="admin-venda-wrapper">
+                        <span>Matriculado?</span>
+                        <input type="checkbox" id="checkMatriculado">
+                        </div>
+                    </section>
+                </div>
+              </div>
+            </div>
+          </div> 
+          </div>
+      </div>
+    </main>
+  </div>
 
   <script type="module" src="../js/guardas.js"></script>
   <script type="module" src="../js/professor.detalhe.js"></script>
+  <script>
+    // Inicializa icones Lucide
+    lucide.createIcons();
+  </script>
 </body>
 </html>

@@ -158,3 +158,24 @@ button:disabled{
   from { transform: translateX(100%); opacity: 0; }
   to { transform: translateX(0); opacity: 1; }
 }
+
+/* --- Ajuste Final da Logo para ficar idêntica ao Admin --- */
+.brand__icone {
+  width: 50px !important;
+  height: 50px !important;
+  border-radius: 12px;
+  background: var(--primario);
+  color: #fff;
+  display: flex;           /* Mudando de grid para flex para melhor centralização */
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;         /* Impede que o box amasse se o texto for grande */
+}
+
+.brand__icone .logo-icon {
+  width: 35px !important;  /* Tamanho ideal para não encostar nas bordas do box */
+  height: 35px !important;
+  object-fit: contain;
+  padding: 0;              /* Remove paddings que possam estar diminuindo a imagem */
+  margin: 0;
+}
