@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="pt-br" class="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cadastre-se — SAE</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/base.css" />
+</head>
+
+<body class="centralizado">
+ <main class="card">
+  <div class="card-header">
+    <div class="logo-box">
+      <img src="../img/KBT_logo2.png" alt="Logo KBT" class="logo2-icon">
+    </div>
+    <h2 style="margin-top: 15px; font-weight: 800;">Criar Conta</h2>
+    <p class="subtitle">Solicite seu acesso como professor</p>
+  </div>
+
+    <form id="formCadastro" autocomplete="off">
+      <label for="nome">Nome Completo</label>
+      <input id="nome" name="nome" type="text" required placeholder="Seu nome" />
+
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" required placeholder="seuemail@exemplo.com" />
+
+      <label for="senha">Senha</label>
+      <input id="senha" name="senha" type="password" required placeholder="Mínimo 6 caracteres" minlength="6" />
+
+      <button id="btnCadastrar" type="submit" style="margin-top: 20px; width: 100%;">Solicitar Acesso</button>
+
+      <p style="text-align: center; margin-top: 20px; font-size: 14px; font-family: Inter;">
+        Já tem uma conta? <a href="login.html" style="color: var(--primario); font-weight: 800; text-decoration: none;">Entrar</a>
+      </p>
+    </form>
+  </main>
+
+  <script type="module">
+    import { supabase } from "../js/supabaseCliente.js";
+    import { showToast } from "../js/util.js";
+
+    const form = document.getElementById('formCadastro');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nome = document.getElementById('nome').value;
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+
+      try {
+        // 1. Criar o usuário no Auth
+        const { data, error: authError } = await supabase.auth.signUp({
+          email,
+          password: senha,
+          options: { data: { nome: nome } }
+        });
+
+        if (authError) throw authError;
+
+        // ... dentro do form.addEventListener, após o auth.signUp ...
+
+if (data.user) {
+  // Usamos UPSERT em vez de INSERT para evitar o erro 409
+  // Ele vai procurar pelo 'id'. Se já existir (criado pelo trigger), ele atualiza o nome e email.
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .upsert({
+      id: data.user.id,
+      nome: nome,
+      email: email,    // Agora vai preencher!
+      role: 'professor',
+      ativo: false 
+    }, { onConflict: 'id' }); // Garante que o conflito seja resolvido pelo ID
+
+  if (profileError) {
+    console.error("Erro no Perfil:", profileError);
+    alert("Erro ao salvar dados do perfil: " + profileError.message);
+  } else {
+    alert("Solicitação enviada! O administrador irá revisar seu acesso.");
+    window.location.href = "login.html";
+  }
+}
+      } catch (err) {
+        alert("Erro: " + err.message);
+      }
+    });
+  </script>
+
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js');
+  }
+</script>
+
+</body>
+</html>

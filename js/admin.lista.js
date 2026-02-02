@@ -36,18 +36,18 @@ function renderizarTabelaAtribuicao(agendamentos, professores) {
 
     lista.innerHTML = agendamentos.map(ag => `
         <tr>
-            <td><strong>${ag.aluno_nome}</strong></td>
-            <td>${ag.tipo_aula}</td>
-            <td>${formatarDataBR(ag.data_aula)}</td>
-            <td><span class="status-pill status-${ag.status}">${ag.status}</span></td>
-            <td>
+            <td data-label="ALUNO"><strong>${ag.aluno_nome}</strong></td>
+            <td data-label="TIPO">${ag.tipo_aula}</td>
+            <td data-label="DATA">${formatarDataBR(ag.data_aula)}</td>
+            <td data-label="STATUS"><span class="status-pill status-${ag.status}">${ag.status}</span></td>
+            <td data-label="COACH">
                 <select class="select-prof filtro__select" data-id="${ag.id}">
                     <option value="">Selecionar Coach</option>
                     ${professores.map(p => `<option value="${p.id}" ${ag.professor_id === p.id ? 'selected' : ''}>${p.nome}</option>`).join('')}
                 </select>
             </td>
             <td>
-                <a href="detalhe.html?id=${ag.id}" class="btn btn--secundario">Ver</a>
+                <a href="detalhe.html?id=${ag.id}" class="btn btn--secundario" style="width:100%; justify-content:center;">Ver Ficha</a>
             </td>
         </tr>
     `).join('');

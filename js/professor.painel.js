@@ -2,6 +2,8 @@
 import { supabase } from "./supabaseCliente.js";
 import { formatarDataBR } from "./util.js";
 
+
+
 let cache = [];
 let abaAtiva = "Hoje"; // Define a aba inicial
 
@@ -29,7 +31,7 @@ function obterEmojiTipo(tipo) {
   const t = (tipo || "").toLowerCase();
   
   if (t.includes("experimental") || t.includes("teste"))
-  return '<span class="material-symbols-outlined">add_reaction</span>';
+  return '<i data-lucide="arrow-right"></i>';
 
 if (t.includes("crossfit"))
   return '<span class="material-symbols-outlined">fitness_center</span>';
@@ -133,7 +135,8 @@ function criarCard(ag) {
     </div>
 
     <a class="card-aula__link" href="../paginas/detalhe.html?id=${ag.id}">
-      Detalhes <span class="material-symbols-outlined">arrow_forward</span>
+      Detalhes <i data-lucide="arrow-right"></i>
+
     </a>
   `;
   return card;
@@ -194,3 +197,5 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("busca")?.addEventListener("input", renderizar);
   document.getElementById("btnAtualizar")?.addEventListener("click", carregarMinhasAulas);
 });
+
+

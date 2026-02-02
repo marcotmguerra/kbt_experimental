@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SAE</title>
+  <title>Login — SAE</title>
 
   <!-- Fonte Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,10 +20,8 @@
       <img src="../img/KBT_logo2.png" alt="Logo KBT" class="logo2-icon">
     </div>
 
-    <p class="subtitle">Sistema de Aulas Experimentais</p>
+    <p class="subtitle" style="margin-top: 10px; font-family: Inter; font-weight: 600; color: var(--texto-fraco);">Sistema de Aulas Experimentais</p>
   </div>
-
-
 
     <form id="formLogin" autocomplete="on">
       <label for="email">E-mail</label>
@@ -32,19 +30,34 @@
       <label for="senha">Senha</label>
       <input id="senha" name="senha" type="password" required placeholder="••••••••" />
 
-      <button id="btnEntrar" type="submit" style="margin-top: 14px;">Entrar</button>
+      <button id="btnEntrar" type="submit" style="margin-top: 14px; width: 100%;">Entrar</button>
 
-      <p id="msgCarregando" hidden style="margin-top:10px;">Entrando…</p>
-      <p id="msgErro" role="alert" hidden style="margin-top:10px; color:#b91c1c; font-weight:700;"></p>
+      <p id="msgCarregando" hidden style="margin-top:10px; text-align: center; font-family: Inter;">Entrando…</p>
+      <p id="msgErro" role="alert" hidden style="margin-top:10px; color:#b91c1c; font-weight:700; text-align: center; font-family: Inter;"></p>
     </form>
+
+    <!-- NOVA SEÇÃO: Link para Cadastro -->
+    <div style="margin-top: 25px; text-align: center; border-top: 1px solid var(--borda); padding-top: 20px;">
+      <p style="font-family: Inter; font-size: 14px; color: var(--texto-fraco);">
+        É professor e não tem conta? <br>
+        <a href="cadastro.html" style="color: var(--primario); text-decoration: none; font-weight: 800;">Solicite seu cadastro aqui</a>
+      </p>
+    </div>
   </main>
 
   <script type="module" src="../js/autenticacao.js"></script>
   
   <!-- LUCIDE -->
- <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     lucide.createIcons();
   </script>
+  
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js');
+  }
+</script>
+
 </body>
 </html>

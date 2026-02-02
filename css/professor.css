@@ -192,3 +192,10 @@ body{ margin:0; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto,
   font-weight:900; font-size:10px;
 }
 .nav-mobile__item--ativo{ color:var(--primario); }
+
+
+i[data-lucide] {
+  width: 20px;
+  height: 20px;
+  color: #400c88;
+}

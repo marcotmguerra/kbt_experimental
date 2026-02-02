@@ -11,6 +11,9 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
 
+  <link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#400c88">
+
   <link rel="stylesheet" href="../css/base.css" />
   <link rel="stylesheet" href="../css/admin.css" />
 </head>
@@ -51,6 +54,9 @@
     <main class="main">
       <header class="topbar">
         <div class="topbar__esquerda">
+          <button id="btnAbrirMenu" class="icon-btn" style="display: none; margin-right: 10px;">
+            <span class="material-symbols-outlined">menu</span>
+          </button>
           <h2 class="topbar__titulo">Solicitação/inscrição de aulas</h2> <!--Verificar o nome-->
 
           <div class="busca">
@@ -149,11 +155,11 @@
           <footer class="tabela-rodape">
             <p id="paginacaoInfo" class="tabela-rodape__texto">—</p>
             <div class="tabela-rodape__botoes">
-              <button id="btnPagAnterior" class="icon-btn icon-btn--borda" type="button">
-                <i data-lucide="arrow-left-from-line"></i><span>Voltar</span>
+              <button id="btnPagAnterior" class="icon-btn--borda" type="button">
+                <i data-lucide="arrow-left-from-line"></i><span></span>
               </button>
-              <button id="btnPagProxima" class="icon-btn icon-btn--borda" type="button">
-                <i data-lucide="arrow-right-from-line"></i><span>Avançar</span>
+              <button id="btnPagProxima" class="icon-btn--borda" type="button">
+                <i data-lucide="arrow-right-from-line"></i><span></span>
               </button>
             </div>
           </footer>
@@ -178,6 +184,12 @@
   <script>
     lucide.createIcons();
   </script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js');
+  }
+</script>
 
 </body>
 </html>

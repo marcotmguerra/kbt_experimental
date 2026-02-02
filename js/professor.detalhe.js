@@ -244,7 +244,7 @@ async function gerarRelatorioTecnicoPDF(ag) {
                 </div>
             </div>
 
-            <h3 style="font-size: 10pt; text-transform: uppercase; color: #400c88; margin-bottom: 8px;">📊 Indicadores Técnicos Observados</h3>
+            <h3 style="font-size: 10pt; text-transform: uppercase; color: #400c88; margin-bottom: 8px;"> Indicadores Técnicos Observados</h3>
             
             <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
                 <thead>
@@ -269,7 +269,7 @@ async function gerarRelatorioTecnicoPDF(ag) {
             </table>
 
             <div style="background: #f4f4f4; padding: 12px; border-left: 5px solid #400c88; border-radius: 5px; margin-bottom: 15px;">
-                <h4 style="margin: 0 0 5px; color: #400c88; font-size: 9pt; text-transform: uppercase;">🧠 ANÁLISE DO COACH</h4>
+                <h4 style="margin: 0 0 5px; color: #400c88; font-size: 9pt; text-transform: uppercase;"> ANÁLISE DO COACH</h4>
                 <p style="font-size: 9pt; line-height: 1.3; color: #222; margin: 0;">"${rv.traducao}"</p>
             </div>
 

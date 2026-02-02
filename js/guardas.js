@@ -33,3 +33,21 @@ document.addEventListener("click", async (e) => {
 });
 
 conferirSessao();
+
+document.addEventListener("DOMContentLoaded", () => {
+  const btnAbrir = document.getElementById("btnAbrirMenu");
+  const sidebar = document.querySelector(".sidebar");
+  const backdrop = document.createElement("div");
+  backdrop.style.cssText = "display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9998;";
+  document.body.appendChild(backdrop);
+
+  btnAbrir?.addEventListener("click", () => {
+    sidebar.classList.add("sidebar--aberto");
+    backdrop.style.display = "block";
+  });
+
+  backdrop.addEventListener("click", () => {
+    sidebar.classList.remove("sidebar--aberto");
+    backdrop.style.display = "none";
+  });
+});

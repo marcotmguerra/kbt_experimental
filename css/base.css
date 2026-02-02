@@ -179,3 +179,24 @@ button:disabled{
   padding: 0;              /* Remove paddings que possam estar diminuindo a imagem */
   margin: 0;
 }
+
+select {
+  outline: none;
+  transition: border-color 0.2s;
+  font-family: 'Inter', sans-serif;
+  color: var(--texto);
+}
+
+select:focus {
+  border-color: var(--primario) !important;
+}
+
+/* Ajuste na coluna de ações para os botões não ficarem colados */
+.tabela__acao button {
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.tabela__acao button:hover {
+  background: rgba(0,0,0,0.05);
+}

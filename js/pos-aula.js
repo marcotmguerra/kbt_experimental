@@ -9,7 +9,7 @@ async function carregarPosAula() {
     const { data, error } = await supabase
         .from("agendamentos")
         .select("*")
-        .in("status", ["confirmado", "faltou"])
+        .in("status", ["confirmado", "faltou", "atribuido"])
         .eq("arquivado", false)
         .order("data_aula", { ascending: false });
 

@@ -86,7 +86,7 @@ body{ background: var(--bg-claro); color: var(--texto); font-family: Inter, syst
 
 .icon-btn{ width:40px; height:40px; border-radius:12px; border:0; background:#f0f2f4; cursor:pointer; display:grid; place-items:center; }
 .icon-btn:hover{ filter:brightness(.95); }
-.icon-btn--borda{ background:transparent; border:1px solid var(--borda); }
+.icon-btn--borda{ background:var(--primario); border:1px solid var(--texto-fraco); }
 
 .conteudo{ flex:1; overflow-y:auto; padding:24px; }
 
@@ -174,3 +174,25 @@ body{ background: var(--bg-claro); color: var(--texto); font-family: Inter, syst
 
 .btn-confirmar{ border:0; background:transparent; color:var(--primario); font-weight:900; cursor:pointer; }
 .btn-confirmar:hover{ filter:brightness(.9); }
+
+
+@media (max-width: 768px) {
+  .app { flex-direction: column; height: auto; }
+  .sidebar {
+    position: fixed; top: 0; left: 0; height: 100vh; z-index: 9999;
+    transform: translateX(-100%); transition: transform 0.3s ease;
+  }
+  .sidebar--aberto { transform: translateX(0); }
+  .topbar { padding: 10px; flex-direction: column; }
+  .topbar__esquerda { width: 100%; justify-content: space-between; }
+  .busca { width: 100% !important; margin-top: 10px; }
+  
+  /* Transformar tabela em Cards */
+  .tabela thead { display: none; }
+  .tabela, .tabela tbody, .tabela tr, .tabela td { display: block; width: 100%; }
+  .tabela tr { background: #fff; margin-bottom: 15px; border-radius: 12px; border: 1px solid var(--borda); padding: 10px; }
+  .tabela td { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
+  .tabela td::before { content: attr(data-label); font-weight: 800; color: var(--texto-fraco); font-size: 11px; }
+  .tabela td:last-child { border: none; justify-content: center; }
+  .stats { grid-template-columns: 1fr !important; }
+}

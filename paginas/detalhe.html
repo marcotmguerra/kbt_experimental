@@ -145,7 +145,7 @@
 
           <div class="col-right">
             <div class="card card-section highlight-card">
-              <h3><span class="material-symbols-outlined">bolt</span> Gestão da Sessão</h3>
+              <h3><span class="material-symbols-outlined"></span> Gestão do aluno</h3>
               
               <div class="acoes-buttons-stack">
                 <a id="btnWhatsapp" class="btn btn--whatsapp" target="_blank">
@@ -184,5 +184,12 @@
     // Inicializa icones Lucide
     lucide.createIcons();
   </script>
+  
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('../sw.js');
+  }
+</script>
+
 </body>
 </html>
