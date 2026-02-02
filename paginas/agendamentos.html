@@ -61,6 +61,48 @@
       </header>
 
       <section class="conteudo">
+  <div class="stats" style="margin-bottom: 2rem;">
+    
+
+    <!-- Card 1: Total do Mês Atual -->
+    <article class="stat-card">
+      <div class="stat-card__topo">
+        <p class="stat-card__label">Total de agendamentos no mês</p>
+        <span class="material-symbols-outlined">calendar_month</span>
+      </div>
+      <div class="stat-card__valor">
+        <span id="statMesTotal" class="stat-card__numero">0</span>
+        <span class="stat-card__chip" id="labelMesNome">—</span>
+      </div>
+    </article>
+
+    <!-- Card 2: Agendamentos da Semana -->
+    <article class="stat-card">
+      <div class="stat-card__topo">
+        <p class="stat-card__label">Agendamentos da semana</p>
+        <span class="material-symbols-outlined">calendar_view_week</span>
+      </div>
+      <div class="stat-card__valor">
+        <span id="statSemana" class="stat-card__numero">0</span>
+        <span class="stat-card__chip stat-card__chip--ok">Próximos 7 dias</span>
+      </div>
+    </article>
+
+    <!-- Card 3: Diferença Semanal -->
+    <article class="stat-card">
+      <div class="stat-card__topo">
+        <p class="stat-card__label">Evolução semanal</p>
+        <span class="material-symbols-outlined">trending_up</span>
+      </div>
+      <div class="stat-card__valor">
+        <span id="statDiferenca" class="stat-card__numero">0</span>
+        <span id="chipDiferenca" class="stat-card__chip">vs. semana passada</span>
+      </div>
+    </article>
+  </div>
+  ...
+
+ 
         <!-- Filtros Superiores -->
         <div class="secao-topo">
           <div class="secao-acoes">

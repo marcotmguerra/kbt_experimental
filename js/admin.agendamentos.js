@@ -1,18 +1,18 @@
 import { supabase } from "./supabaseCliente.js";
 import { formatarDataBR, showToast } from "./util.js";
 
-// Variáveis globais para busca e exportação
+// Variáveis globais
 let todosAgendamentos = [];
 let todosCoaches = [];
+let dadosFiltradosParaExportar = [];
 
 async function inicializar() {
   const lista = document.getElementById("listaAgendamentos");
   if (!lista) return;
 
-  lista.innerHTML = `<tr><td colspan="7" style="text-align:center;">Buscando dados...</td></tr>`;
+  lista.innerHTML = `<tr><td colspan="7" style="text-align:center;">Carregando dados...</td></tr>`;
 
   try {
-    // 1. Busca Agendamentos e Coaches simultaneamente
     const [resAgendamentos, resCoaches] = await Promise.all([
       supabase.from("agendamentos").select("*, profiles(nome)").order("data_aula", { ascending: false }),
       supabase.from("profiles").select("id, nome").eq("role", "professor")
@@ -24,15 +24,15 @@ async function inicializar() {
     todosAgendamentos = resAgendamentos.data;
     todosCoaches = resCoaches.data;
 
-    // 2. Popular o Select de Coaches
     popularFiltroCoaches(todosCoaches);
-
-    // 3. Definir o mês atual como padrão no select (opcional, mas recomendado)
-    const mesAtual = String(new Date().getMonth() + 1).padStart(2, '0');
+    
+    // Define o mês atual no filtro por padrão
+    const mesAtualNum = String(new Date().getMonth() + 1).padStart(2, '0');
     const selectMes = document.getElementById("filtroMes");
-    if (selectMes && !selectMes.value) selectMes.value = mesAtual;
+    if (selectMes) selectMes.value = mesAtualNum;
 
-    // 4. Renderizar primeira vez
+    // Atualiza os Cards e a Tabela
+    atualizarCardsEstatisticos(todosAgendamentos);
     filtrarERenderizar();
 
   } catch (err) {
@@ -45,7 +45,6 @@ async function inicializar() {
 function popularFiltroCoaches(coaches) {
   const select = document.getElementById("filtroCoach");
   if (!select) return;
-  
   select.innerHTML = '<option value="todos">Todos os Coaches</option>';
   coaches.forEach(c => {
     const opt = document.createElement("option");
@@ -55,27 +54,93 @@ function popularFiltroCoaches(coaches) {
   });
 }
 
+/**
+ * Lógica de Estatísticas: Segunda a Domingo
+ */
+function atualizarCardsEstatisticos(agendamentos) {
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  // --- CÁLCULO DA SEMANA ATUAL (Segunda a Domingo) ---
+  const diaSemana = hoje.getDay(); // 0 (Dom) a 6 (Sáb)
+  // Ajuste para segunda ser o primeiro dia (1) e domingo o último (7)
+  const diffParaSegunda = hoje.getDate() - (diaSemana === 0 ? 6 : diaSemana - 1);
+  
+  const segundaFeira = new Date(hoje);
+  segundaFeira.setDate(diffParaSegunda);
+  segundaFeira.setHours(0, 0, 0, 0);
+
+  const domingo = new Date(segundaFeira);
+  domingo.setDate(segundaFeira.getDate() + 6);
+  domingo.setHours(23, 59, 59, 999);
+
+  // --- SEMANA PASSADA (Segunda a Domingo anterior) ---
+  const segundaPassada = new Date(segundaFeira);
+  segundaPassada.setDate(segundaFeira.getDate() - 7);
+  
+  const domingoPassado = new Date(domingo);
+  domingoPassado.setDate(domingo.getDate() - 7);
+
+  // --- FILTRAGEM ---
+  const converterData = (dataStr) => {
+    const d = new Date(dataStr);
+    d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
+    return d;
+  };
+
+  const totalSemanaAtual = agendamentos.filter(ag => {
+    const d = converterData(ag.data_aula);
+    return d >= segundaFeira && d <= domingo;
+  }).length;
+
+  const totalSemanaPassada = agendamentos.filter(ag => {
+    const d = converterData(ag.data_aula);
+    return d >= segundaPassada && d <= domingoPassado;
+  }).length;
+
+  const totalMes = agendamentos.filter(ag => {
+    const d = converterData(ag.data_aula);
+    return d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear();
+  }).length;
+
+  // --- ATUALIZAR INTERFACE ---
+  const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+  
+  document.getElementById("statSemana").textContent = totalSemanaAtual;
+  document.getElementById("statMesTotal").textContent = totalMes;
+  document.getElementById("labelMesNome").textContent = nomesMeses[hoje.getMonth()];
+
+  const diferenca = totalSemanaAtual - totalSemanaPassada;
+  const elDiferenca = document.getElementById("statDiferenca");
+  const chipDiferenca = document.getElementById("chipDiferenca");
+
+  elDiferenca.textContent = (diferenca > 0 ? "+" : "") + diferenca;
+  
+  if (diferenca > 0) {
+    chipDiferenca.className = "stat-card__chip stat-card__chip--ok";
+    chipDiferenca.textContent = "Melhor que semana passada";
+  } else if (diferenca < 0) {
+    chipDiferenca.className = "stat-card__chip stat-card__chip--alerta";
+    chipDiferenca.textContent = "Menos que semana passada";
+  } else {
+    chipDiferenca.className = "stat-card__chip";
+    chipDiferenca.textContent = "Igual semana passada";
+  }
+}
+
 function filtrarERenderizar() {
   const lista = document.getElementById("listaAgendamentos");
-  
-  // Captura valores dos filtros
   const busca = document.getElementById("buscaAgenda").value.toLowerCase();
   const mes = document.getElementById("filtroMes").value;
   const coachId = document.getElementById("filtroCoach").value;
   const matricula = document.getElementById("filtroMatricula").value;
 
-  const filtrados = todosAgendamentos.filter(item => {
-    // Filtro de Busca (Nome)
+  dadosFiltradosParaExportar = todosAgendamentos.filter(item => {
     const matchesBusca = item.aluno_nome?.toLowerCase().includes(busca);
-    
-    // Filtro de Mês (compara o mês da data_aula "YYYY-MM-DD")
     const mesAula = item.data_aula.split('-')[1]; 
     const matchesMes = mes === "todos" || mesAula === mes;
-
-    // Filtro de Coach
     const matchesCoach = coachId === "todos" || item.professor_id === coachId;
-
-    // Filtro de Matrícula
+    
     let matchesMatricula = true;
     if (matricula === "sim") matchesMatricula = item.matriculado === true;
     if (matricula === "nao") matchesMatricula = item.matriculado === false;
@@ -83,12 +148,12 @@ function filtrarERenderizar() {
     return matchesBusca && matchesMes && matchesCoach && matchesMatricula;
   });
 
-  if (filtrados.length === 0) {
+  if (dadosFiltradosParaExportar.length === 0) {
     lista.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;">Nenhum registro encontrado.</td></tr>`;
     return;
   }
 
-  lista.innerHTML = filtrados.map(ag => `
+  lista.innerHTML = dadosFiltradosParaExportar.map(ag => `
     <tr>
       <td>${formatarDataBR(ag.data_aula)}</td>
       <td><strong>${ag.aluno_nome ?? 'Sem Nome'}</strong></td>
@@ -101,40 +166,24 @@ function filtrarERenderizar() {
       </td>
     </tr>
   `).join("");
-  
-  // Guardar os filtrados para exportação
-  window.dadosParaExportar = filtrados;
 }
 
 function exportarCSV() {
-  const dados = window.dadosParaExportar || [];
-  if (dados.length === 0) {
+  if (dadosFiltradosParaExportar.length === 0) {
     showToast("Não há dados para exportar", "alerta");
     return;
   }
 
-  // Cabeçalho
   let csv = "Data;Aluno;Coach;Status;Matriculado;Tipo\n";
-
-  // Linhas
-  dados.forEach(item => {
-    const data = formatarDataBR(item.data_aula);
-    const aluno = item.aluno_nome || "";
-    const coach = item.profiles?.nome || "N/A";
-    const status = item.status || "pendente";
-    const matriculado = item.matriculado ? "Sim" : "Nao";
-    const tipo = item.tipo_aula || "Experimental";
-
-    csv += `${data};${aluno};${coach};${status};${matriculado};${tipo}\n`;
+  dadosFiltradosParaExportar.forEach(item => {
+    csv += `${formatarDataBR(item.data_aula)};${item.aluno_nome || ""};${item.profiles?.nome || "N/A"};${item.status || "pendente"};${item.matriculado ? "Sim" : "Nao"};${item.tipo_aula || "Experimental"}\n`;
   });
 
-  // Download do arquivo (com suporte a acentos no Excel via BOM)
   const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement("a");
   const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
   link.setAttribute("href", url);
-  link.setAttribute("download", `relatorio_agendamentos_${new Date().getTime()}.csv`);
-  link.style.visibility = 'hidden';
+  link.setAttribute("download", `relatorio_agendamentos.csv`);
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
@@ -142,12 +191,8 @@ function exportarCSV() {
 
 // Event Listeners
 document.addEventListener("DOMContentLoaded", inicializar);
-
-// Ouvintes para filtros
 document.getElementById("buscaAgenda")?.addEventListener("input", filtrarERenderizar);
 document.getElementById("filtroMes")?.addEventListener("change", filtrarERenderizar);
 document.getElementById("filtroCoach")?.addEventListener("change", filtrarERenderizar);
 document.getElementById("filtroMatricula")?.addEventListener("change", filtrarERenderizar);
-
-// Ouvinte para exportação
 document.getElementById("btnExportar")?.addEventListener("click", exportarCSV);
