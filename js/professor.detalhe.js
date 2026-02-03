@@ -211,63 +211,117 @@ function mostrarPainelAdmin(id, ag) {
     document.getElementById("btnFaltou").onclick = () => supabase.from("agendamentos").update({ status: 'faltou' }).eq("id", id).then(() => location.reload());
 }
 
+// Função auxiliar para converter imagem em Base64 (garante que apareça no PDF)
+function imagemParaBase64(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/png'));
+        };
+        img.onerror = reject;
+        img.src = url;
+    });
+}
+
 async function gerarRelatorioTecnicoPDF(ag) {
     const rv = ag.relatorio_vivencia;
     const nomeCoach = ag.profiles?.nome || "Responsável Técnico";
-    const content = document.createElement("div");
 
-    content.style.cssText = "width: 210mm; padding: 10mm 15mm; font-family: 'Helvetica', sans-serif; color: #111; background: white;";
+    showToast("Processando imagem...");
 
-    content.innerHTML = `
-        <div style="border-bottom: 3px solid #400c88; padding-bottom: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <img src="../img/KBT_logo2.png" alt="Logo KBT" style="height: 60px;">
-                <div>
-                    <h1 style="color: #400c88; margin: 0; font-size: 16pt; font-weight: 900;">RELATÓRIO DE VIVÊNCIA</h1>
-                    <p style="margin: 3px 0 0; font-weight: bold; color: #666; font-size: 9pt;">KABUTO CROSSFIT</p>
+    let logoBase64 = "";
+    try {
+        // Tenta carregar a logo e converter para texto (Base64)
+        // Certifique-se que o caminho da imagem está correto
+        logoBase64 = await imagemParaBase64("../img/KBT_logo2.png");
+    } catch (e) {
+        console.warn("Não foi possível carregar a logo, gerando sem ela.", e);
+    }
+
+    const htmlString = `
+        <div style="padding: 20px; font-family: Arial, sans-serif; color: #000; background-color: #fff;">
+            <div style="border-bottom: 4px solid #400c88; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    ${logoBase64 ? `<img src="${logoBase64}" style="height: 50px; margin-right: 15px;">` : ''}
+                    <div>
+                        <h1 style="color: #400c88; margin: 0; font-size: 18px;">RELATÓRIO DE VIVÊNCIA</h1>
+                        <p style="margin: 0; color: #666; font-size: 10px; font-weight: bold;"> KABUTO - TRAINING CLUB</p>
+                    </div>
+                </div>
+                <div style="text-align: right; font-size: 14px;">
+                    <strong>Aluno:</strong> ${ag.aluno_nome}<br>
+                    <strong>Data:</strong> ${formatarDataBR(ag.data_aula)}
                 </div>
             </div>
-            <div style="text-align: right; font-size: 9pt;">
-                <p style="margin:0;">Aluno: <strong>${ag.aluno_nome}</strong></p>
-                ${ag.responsavel_nome ? `<p style="margin:0;">Responsável: <strong>${ag.responsavel_nome}</strong></p>` : ''}
-                <p style="margin:0;">Data: ${formatarDataBR(ag.data_aula)}</p>
+
+            <h3 style="font-size: 13px; color: #400c88; text-transform: uppercase; margin-bottom: 10px;">Indicadores Técnicos</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+                <thead>
+                    <tr style="background: #400c88; color: #fff; font-size: 11px;">
+                        <th style="padding: 8px; text-align: left;">Capacidade</th>
+                        <th style="padding: 8px; text-align: center; width: 40px;">Nota</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${Object.keys(rv.notas).map(id => `
+                        <tr style="border-bottom: 1px solid #eee;">
+                            <td style="padding: 8px;">
+                                <div style="font-weight: bold; color: #400c88; font-size: 12px;">${INSIGHTS_RELATORIO[rv.categoria][id].label}</div>
+                                <div style="font-size: 10px; color: #555;">${obterTextoInsight(rv.categoria, id, rv.notas[id])}</div>
+                            </td>
+                            <td style="padding: 8px; text-align: center; font-weight: bold; font-size: 14px; background: #f9f9f9;">
+                                ${rv.notas[id]}
+                            </td>
+                        </tr>`).join('')}
+                </tbody>
+            </table>
+
+            <div style="background: #f4f4f4; padding: 12px; border-left: 5px solid #400c88; margin-bottom: 20px;">
+                <h4 style="margin: 0 0 5px; color: #400c88; font-size: 11px;">ANÁLISE DO COACH</h4>
+                <p style="font-size: 11px; margin: 0; line-height: 1.4;"><i>"${rv.traducao}"</i></p>
             </div>
-        </div>
 
-        <h3 style="font-size: 10pt; text-transform: uppercase; color: #400c88; margin-bottom: 8px;"> Indicadores Técnicos Observados</h3>
-        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-            <tr style="background: #400c88; color: #fff;">
-                <th style="padding: 6px; text-align: left; border: 1px solid #ddd; font-size: 9pt;">Capacidade Avaliada</th>
-                <th style="padding: 6px; border: 1px solid #ddd; text-align: center; width: 50px; font-size: 9pt;">Nota</th>
-            </tr>
-            ${Object.keys(rv.notas).map(id => `
-                <tr>
-                    <td style="padding: 6px; border: 1px solid #ddd; font-size: 9pt;">
-                        <strong style="color: #400c88;">${INSIGHTS_RELATORIO[rv.categoria][id].label}</strong><br>
-                        <span>${obterTextoInsight(rv.categoria, id, rv.notas[id])}</span>
-                    </td>
-                    <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-weight: 900; color: #400c88;">${rv.notas[id]}</td>
-                </tr>`).join('')}
-        </table>
-
-        <div style="background: #f4f4f4; padding: 12px; border-left: 5px solid #400c88; margin-bottom: 15px;">
-            <h4 style="margin: 0 0 5px; color: #400c88; font-size: 9pt;">ANÁLISE DO COACH</h4>
-            <p style="font-size: 9pt; margin: 0;">"${rv.traducao}"</p>
-        </div>
-
-        <div style="background: #400c88; color: #fff; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-            <p style="margin: 0; font-size: 8pt; text-transform: uppercase;">PROGRAMA SUGERIDO</p>
-            <h2 style="margin: 5px 0 0; font-size: 16pt;">${rv.recomendacao}</h2>
-        </div>
-
-        <div style="text-align: center; margin-top: 20px;">
-            <div style="width: 60mm; border-top: 1px solid #000; margin: 0 auto 5px;"></div>
-            <p style="margin: 0; font-weight: bold; font-size: 10pt;">Coach ${nomeCoach}</p>
+            <div style="background: #400c88; color: #fff; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 30px;">
+                <small style="text-transform: uppercase; font-size: 9px; opacity: 0.8;">Programa Sugerido</small>
+                <h2 style="margin: 5px 0 0; font-size: 16px;">${rv.recomendacao}</h2>
+            </div>
+                            <div style="height: 100px;"></div> 
+            <div style="text-align: center; margin-top: 30px;">
+                <div style="width: 180px; border-top: 1px solid #000; margin: 0 auto 5px;"></div>
+                <p style="margin: 0; font-weight: bold; font-size: 11px;">Coach ${nomeCoach}</p>
+                <p style="margin: 0; font-size: 9px; color: #666;">Equipe Técnica Kabuto</p>
+            </div>
         </div>
     `;
 
-    html2pdf().set({ margin: 0, filename: `Relatorio_Kabuto_${ag.aluno_nome}.pdf`, jsPDF: { format: 'a4' } }).from(content).save();
+    const opt = {
+        margin: 10,
+        filename: `Relatorio_Kabuto_${ag.aluno_nome}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { 
+            scale: 2, 
+            useCORS: true, 
+            backgroundColor: '#ffffff' 
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    showToast("Gerando PDF...");
+
+    try {
+        await html2pdf().set(opt).from(htmlString).save();
+    } catch (e) {
+        console.error("Erro no PDF:", e);
+        alert("Erro ao gerar PDF.");
+    }
 }
+
 
 const TEXTOS_LEGENDA = {
     kids: `
