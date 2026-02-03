@@ -159,6 +159,43 @@
                 <a id="btnWhatsapp" class="btn btn--whatsapp" target="_blank" href="#">
                   <span class="material-symbols-outlined">chat</span> Chamar WhatsApp
                 </a>
+                  <!-- BOTÃO E CAMPO DE ALTERAR DATA -->
+
+                  <div id="containerTrocaData" style="display: none; flex-direction: column; gap: 8px; margin-top: 10px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px;">
+    <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div>
+            <label style="color: white; margin: 0; font-size: 11px;">1. Escolha a Data:</label>
+            <input type="date" id="inputNovaData" style="padding: 8px; border-radius: 8px; border: none; font-size: 14px; width: 100%;">
+        </div>
+        <div>
+            <label style="color: white; margin: 0; font-size: 11px;">2. Horários Disponíveis:</label>
+            <select id="selectNovoHorario" style="padding: 8px; border-radius: 8px; border: none; font-size: 14px; width: 100%;">
+                <option value="">Selecione uma data primeiro...</option>
+            </select>
+        </div>
+    </div>
+    <button id="btnSalvarNovaData" class="btn btn--ok" style="padding: 10px; font-size: 13px; width: 100%; margin-top: 5px;">
+        Confirmar Agendamento
+    </button>
+</div>
+<button id="btnAbrirTrocaData" class="btn btn--secundario" style="margin-top: 8px; border-color: rgba(255,255,255,0.3); color: white;">
+  <span class="material-symbols-outlined">calendar_month</span> Alterar Data
+</button>
+
+
+  <div id="modalidadesAula" class="modalidades-grid">
+  <button class="pill kids" data-modalidade="Kids">Kids</button>
+
+  <button class="pill strong" data-modalidade="Strong">Strong</button>
+  <button class="pill cardio" data-modalidade="Cardio & Burn">Cardio & Burn</button>
+  <button class="pill hyrox" data-modalidade="Hyrox">Hyrox</button>
+  <button class="pill skill" data-modalidade="Skill">Skill</button>
+</div>
+
+
+
+
+
 
                 <div id="containerAdminAcoes" class="admin-stack" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
                     <div class="row-buttons" style="display: flex; gap: 10px; margin-bottom: 15px;">

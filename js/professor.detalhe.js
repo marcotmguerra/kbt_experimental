@@ -1,6 +1,11 @@
 import { supabase } from "./supabaseCliente.js";
 import { showToast, formatarDataBR, linkWhatsApp, getQueryParam } from "./util.js";
 
+let categoriaAluno = 'adulto';
+let tagIdadeAluno = '';
+let idadeDetectada = 0;
+
+
 const INSIGHTS_RELATORIO = {
     kids: {
         coord: { label: "Coordenação Geral", baixo: "Dificuldade severa em organizar movimentos simples. Sem estímulo, pode evitar esportes coletivos por se sentir incapaz.", medio: "Coordenação em desenvolvimento, mas oscila em tarefas combinadas. A prática trará o refino necessário.", alto: "Excelente domínio motor e consciência corporal. Foco agora é desafiar com complexidade." },
@@ -76,6 +81,10 @@ async function carregar() {
 
     if (perfil.role === 'admin') mostrarPainelAdmin(id, ag);
     else mostrarPainelProfessor(id, ag);
+    await inicializarTrocaData(ag);
+    inicializarModalidades(ag);
+
+    
 }
 
 function obterTextoInsight(categoria, idPergunta, nota) {
@@ -333,4 +342,227 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 });
 
-document.addEventListener("DOMContentLoaded", carregar);
+function faixaPermiteIdade(faixa, idade) {
+    // Ex: "7-13a", "7-10a", "4-6a", "Andantes-3a"
+    const match = faixa.match(/(\d+)\s*-\s*(\d+)/);
+    if (!match) return false;
+
+    const min = Number(match[1]);
+    const max = Number(match[2]);
+
+    return idade >= min && idade <= max;
+}
+
+
+// --- CONFIGURAÇÃO DA GRADE DE HORÁRIOS UNIDADE CASTELO ---
+const GRADE_HORARIOS = {
+    kids: {
+        seg_qua: ["08:30 (Andantes-3a)", "09:00 (7-13a)", "17:00 (7-13a)", "18:15 (7-10a)", "19:15 (7-13a)"],
+        ter_qui: ["08:15 (4-6a)", "09:00 (7-13a)", "17:00 (7-13a)", "18:15 (4-6a)", "19:15 (7-13a)"],
+        sex:     ["09:00 (7-13a)", "17:00 (7-13a)", "18:15 (7-10a)", "19:15 (7-13a)"],
+        sabado:  ["08:00 (Andantes-3a)", "08:30 (4-6a)", "09:15 (7-10a)", "10:15 (11-13a)"]
+    },
+    adulto: {
+        semana: ["06:00", "07:00", "08:00", "09:00", "16:00", "17:00", "18:15", "19:15", "20:15"],
+        sabado: ["07:30", "08:30", "09:30"]
+    }
+};
+
+// --- FUNÇÃO PARA AGENDAMENTO INTELIGENTE (VERSÃO BLINDADA) ---
+// --- FUNÇÃO PARA AGENDAMENTO INTELIGENTE (VERSÃO BLINDADA) ---
+async function inicializarTrocaData(dadosAgendamento) {
+    const btnAbrir = document.getElementById("btnAbrirTrocaData");
+    const container = document.getElementById("containerTrocaData");
+    const btnSalvar = document.getElementById("btnSalvarNovaData");
+    const inputData = document.getElementById("inputNovaData");
+    const selectHorario = document.getElementById("selectNovoHorario");
+    const idAgendamento = getQueryParam("id");
+
+    if (!btnAbrir || !selectHorario || !dadosAgendamento) return;
+
+    // --- DETECÇÃO ROBUSTA DE IDADE ---
+    try {
+        const dadosForm = typeof dadosAgendamento.form_raw === 'string'
+            ? JSON.parse(dadosAgendamento.form_raw)
+            : dadosAgendamento.form_raw;
+
+        const chaveNascimento = Object.keys(dadosForm || {})
+    .find(k =>
+        k.toLowerCase().includes("nascimento") ||
+        k.toLowerCase().includes("data de nascimento")
+    );
+
+if (chaveNascimento && dadosForm[chaveNascimento]) {
+    const nascimento = new Date(dadosForm[chaveNascimento]);
+    const hoje = new Date();
+
+    idadeDetectada = hoje.getFullYear() - nascimento.getFullYear();
+
+    const m = hoje.getMonth() - nascimento.getMonth();
+    if (m < 0 || (m === 0 && hoje.getDate() < nascimento.getDate())) {
+        idadeDetectada--;
+    }
+
+    // DEFINIÇÃO DE FAIXA
+    if (idadeDetectada <= 3) tagIdadeAluno = "Andantes-3a";
+    else if (idadeDetectada <= 6) tagIdadeAluno = "4-6a";
+    else if (idadeDetectada <= 10) tagIdadeAluno = "7-10a";
+    else if (idadeDetectada <= 13) tagIdadeAluno = "11-13a";
+
+    categoriaAluno = idadeDetectada < 14 ? 'kids' : 'adulto';
+}
+
+
+        
+    } catch (e) {
+        console.error("Erro ao detectar idade:", e);
+    }
+
+    // --- ATUALIZA HORÁRIOS ---
+    const atualizarSelectHorarios = () => {
+        if (!inputData.value) return;
+
+        const [ano, mes, dia] = inputData.value.split('-');
+        const dataObj = new Date(ano, mes - 1, dia);
+        const diaSemana = dataObj.getDay();
+
+        let opcoes = [];
+
+        if (categoriaAluno === 'kids') {
+            if (diaSemana === 1 || diaSemana === 3) opcoes = GRADE_HORARIOS.kids.seg_qua;
+            else if (diaSemana === 2 || diaSemana === 4) opcoes = GRADE_HORARIOS.kids.ter_qui;
+            else if (diaSemana === 5) opcoes = GRADE_HORARIOS.kids.sex;
+            else if (diaSemana === 6) opcoes = GRADE_HORARIOS.kids.sabado;
+
+            // 🔒 FILTRA SOMENTE A FAIXA ETÁRIA CORRETA
+            if (categoriaAluno === 'kids') {
+    opcoes = opcoes.filter(h => {
+        const faixa = h.match(/\((.*?)\)/)?.[1]; // pega "7-13a"
+        if (!faixa) return false;
+
+        // Caso especial: Andantes
+        if (faixa.toLowerCase().includes("andantes")) {
+            return idadeDetectada <= 3;
+        }
+
+        return faixaPermiteIdade(faixa, idadeDetectada);
+    });
+}
+
+        } else {
+            if (diaSemana >= 1 && diaSemana <= 5) opcoes = GRADE_HORARIOS.adulto.semana;
+            else if (diaSemana === 6) opcoes = GRADE_HORARIOS.adulto.sabado;
+        }
+
+        if (opcoes.length === 0) {
+            selectHorario.innerHTML = `<option value="">Sem aulas disponíveis</option>`;
+            return;
+        }
+
+        selectHorario.innerHTML = opcoes.map(h => `
+            <option value="${h.substring(0,5)}">${h}</option>
+        `).join('');
+    };
+
+    inputData.onchange = atualizarSelectHorarios;
+
+    btnAbrir.onclick = () => {
+        container.style.display = container.style.display === 'flex' ? 'none' : 'flex';
+
+        if (container.style.display === 'flex') {
+            const msg = categoriaAluno === 'kids'
+                ? `Aluno ${idadeDetectada} anos — grade infantil aplicada`
+                : `Aluno adulto — grade padrão`;
+
+            showToast(msg);
+            if (inputData.value) atualizarSelectHorarios();
+        }
+    };
+
+    btnSalvar.onclick = async () => {
+        if (!inputData.value || !selectHorario.value) {
+            return showToast("Selecione data e horário", "erro");
+        }
+
+        btnSalvar.disabled = true;
+        btnSalvar.textContent = "Agendando...";
+
+        const { error } = await supabase
+            .from("agendamentos")
+            .update({
+                data_aula: `${inputData.value}T${selectHorario.value}:00-03:00`
+            })
+            .eq("id", idAgendamento);
+
+        if (error) {
+            showToast("Erro ao salvar", "erro");
+            btnSalvar.disabled = false;
+            btnSalvar.textContent = "Salvar";
+        } else {
+            showToast("Aula reagendada!");
+            setTimeout(() => location.reload(), 1000);
+        }
+    };
+}
+
+
+
+
+// Modifique a última linha do seu arquivo para carregar as duas funções:
+document.addEventListener("DOMContentLoaded", () => {
+    carregar();
+});
+
+
+
+
+// --- MODALIDADE / TIPO DA AULA ---
+let modalidadeSelecionada = "";
+
+function inicializarModalidades(agendamento) {
+    const botoes = document.querySelectorAll("#modalidadesAula .pill");
+    if (!botoes.length) return;
+
+    // 🔹 Carrega o tipo salvo no Supabase
+    if (agendamento.tipo_aula) {
+        modalidadeSelecionada = agendamento.tipo_aula;
+
+        botoes.forEach(btn => {
+            if (btn.dataset.modalidade === modalidadeSelecionada) {
+                btn.classList.add("active");
+            }
+        });
+
+        // Atualiza o resumo ao carregar
+        const elTipo = document.getElementById("detTipo");
+        if (elTipo) elTipo.textContent = modalidadeSelecionada;
+    }
+
+    botoes.forEach(btn => {
+        btn.onclick = async () => {
+            // UI imediata
+            botoes.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            modalidadeSelecionada = btn.dataset.modalidade;
+
+            // 🔥 ATUALIZA IMEDIATAMENTE O RESUMO
+            const elTipo = document.getElementById("detTipo");
+            if (elTipo) elTipo.textContent = modalidadeSelecionada;
+
+            // Salva no banco
+            const { error } = await supabase
+                .from("agendamentos")
+                .update({ tipo_aula: modalidadeSelecionada })
+                .eq("id", getQueryParam("id"));
+
+            if (error) {
+                showToast("Erro ao salvar modalidade", "erro");
+            } else {
+                showToast(`Tipo de aula definido: ${modalidadeSelecionada}`);
+            }
+        };
+    });
+
+}
+
