@@ -28,7 +28,7 @@ document.addEventListener("click", async (e) => {
   if (e.target.closest("#btnSair")) {
     e.preventDefault();
     await supabase.auth.signOut();
-    window.location.href = "../paginas/login.html";
+    window.location.href = "/index.html";
   }
 });
 
