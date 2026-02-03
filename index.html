@@ -2,124 +2,106 @@
 <html lang="pt-br" class="light">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Login — SAE</title>
 
+  <!-- PWA e Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#400c88">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="img/KBT_logo2.png" />
+
+  <!-- Fontes -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
+  <!-- CSS -->
   <link rel="stylesheet" href="css/base.css" />
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#400c88">
 
-  <script>
-    window.deferredPrompt = null;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      window.deferredPrompt = e;
-      console.log('📱 PWA pronto para instalar (evento capturado)');
-    });
-  </script>
+  <style>
+    /* Estilo emergencial para garantir que o banner não apareça quebrado antes do PWA detectar */
+    #pwa-install-banner { visibility: hidden; }
+    #pwa-install-banner.show { visibility: visible; }
+  </style>
 </head>
 
 <body class="centralizado">
 
- <main id="tela-login" class="card">
+  <main id="tela-login" class="card">
     <div class="card-header">
       <div class="logo-box">
         <img src="img/KBT_logo2.png" alt="Logo KBT" class="logo2-icon">
       </div>
-      <p class="subtitle" style="margin-top: 10px; font-family: Inter; font-weight: 600; color: var(--texto-fraco);">Sistema de Aulas Experimentais</p>
+      <p class="subtitle" style="margin-top: 10px; font-family: Inter; font-weight: 600; color: var(--texto-fraco);">
+        Sistema de Aulas Experimentais
+      </p>
     </div>
 
     <form id="formLogin" autocomplete="on">
       <label for="email">E-mail</label>
       <input id="email" name="email" type="email" required placeholder="seuemail@exemplo.com" />
+      
       <label for="senha">Senha</label>
       <input id="senha" name="senha" type="password" required placeholder="••••••••" />
       
       <button id="btnEntrar" type="submit" style="margin-top: 14px; width: 100%;">Entrar</button>
 
-      <p id="msgCarregando" hidden style="margin-top:10px; text-align: center; font-family: Inter;">Entrando…</p>
-      <p id="msgErro" role="alert" hidden style="margin-top:10px; color:#b91c1c; font-weight:700; text-align: center; font-family: Inter;"></p>
+      <p id="msgCarregando" hidden style="margin-top:10px; text-align: center;">Entrando…</p>
+      <p id="msgErro" role="alert" hidden style="margin-top:10px; color:#b91c1c; font-weight:700; text-align: center;"></p>
     </form>
 
     <div style="margin-top: 25px; text-align: center; border-top: 1px solid var(--borda); padding-top: 20px;">
-      <p style="font-family: Inter; font-size: 14px; color: var(--texto-fraco);">
+      <p style="font-size: 14px; color: var(--texto-fraco);">
         É professor e não tem conta? <br>
         <a href="paginas/cadastro.html" style="color: var(--primario); text-decoration: none; font-weight: 800;">Solicite seu cadastro aqui</a>
       </p>
     </div>
- </main>
+  </main>
 
- <div id="pwa-install-banner" class="pwa-banner" style="display: none;">
+  <!-- Banner PWA Estilo Globo -->
+  <div id="pwa-install-banner" class="pwa-banner">
     <div class="pwa-content">
       <div class="pwa-header">
-        <img src="img/KBT_logo2.png" alt="Logo KBT" class="logo2-icon">
+        <img src="img/KBT_logo2.png" alt="Logo KBT" class="pwa-logo">
         <div class="pwa-text">
-          <strong>Instalar App?</strong>
-          <p>Adicione à tela inicial para acesso rápido.</p>
+          <strong>Instalar SAE Kabuto?</strong>
+          <p>Adicione à tela inicial para acesso rápido e melhor experiência.</p>
         </div>
       </div>
       <div class="pwa-actions">
-        <button id="btn-pwa-cancel" class="btn-pwa-secondary">Não</button>
+        <button id="btn-pwa-cancel" class="btn-pwa-secondary">Agora não</button>
         <button id="btn-pwa-install" class="btn-pwa-primary">Instalar</button>
       </div>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script type="module" src="js/autenticacao.js"></script>
+  <script type="module" src="js/pwa-install.js"></script>
   
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>
 
   <script>
     // 1. GERENCIAMENTO DE SESSÃO
-    // Verifica se já está logado assim que abre o app
     document.addEventListener("DOMContentLoaded", () => {
-        // Ajuste esta chave conforme o que você usa no autenticacao.js (Supabase costuma usar 'sb-access-token' ou similar)
-        const token = localStorage.getItem('sb-access-token') || localStorage.getItem('usuario_logado');
-
-        if (token) {
-            // Se já tem login, redireciona para o dashboard dentro da pasta paginas
-            window.location.href = "paginas/dashboard.html"; // Ajuste o nome do arquivo se for diferente
-        } else {
-            // Se não tem login, verifica se pode mostrar o banner de instalação
-            if (window.deferredPrompt) {
-               document.getElementById('pwa-install-banner').style.display = 'flex';
-            }
+        // Verifica se existe sessão no Supabase (ajuste a chave se necessário)
+        const session = localStorage.getItem('sb-access-token') || localStorage.getItem('usuario_logado');
+        if (session) {
+            window.location.href = "paginas/professor.html"; 
         }
     });
 
-    // 2. SERVICE WORKER (Agora na raiz!)
+    // 2. REGISTRO DO SERVICE WORKER
     if ('serviceWorker' in navigator) {
-      // Como sw.js está ao lado do index.html, o caminho é direto
-      navigator.serviceWorker.register('sw.js')
-      .then(reg => console.log('✅ Service Worker registrado!', reg))
-      .catch(err => console.error('❌ Erro no SW:', err));
-    }
-
-    // 3. BOTÕES DO PWA
-    const btnInstall = document.getElementById('btn-pwa-install');
-    const btnCancel = document.getElementById('btn-pwa-cancel');
-    const banner = document.getElementById('pwa-install-banner');
-
-    if(btnInstall) {
-        btnInstall.addEventListener('click', async () => {
-            if (window.deferredPrompt) {
-                window.deferredPrompt.prompt();
-                const { outcome } = await window.deferredPrompt.userChoice;
-                window.deferredPrompt = null;
-                banner.style.display = 'none';
-            }
-        });
-    }
-
-    if(btnCancel) {
-        btnCancel.addEventListener('click', () => {
-            banner.style.display = 'none';
-        });
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('✅ SW registrado:', reg.scope))
+          .catch(err => console.log('❌ Erro no SW:', err));
+      });
     }
   </script>
 
