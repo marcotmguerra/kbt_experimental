@@ -469,3 +469,39 @@ input[type="checkbox"] {
     margin-bottom: 5px;
 }
 
+/* Botão de ajuda ainda menor e discreto */
+.btn-help-mini {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid #ddd;
+    background: #f9f9f9;
+    color: #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    transition: all 0.2s;
+}
+.btn-help-mini:hover {
+    background: var(--primario);
+    color: white;
+    border-color: var(--primario);
+}
+.btn-help-mini .material-symbols-outlined {
+    font-size: 14px !important;
+}
+
+/* Input padrão para o modal */
+.input-padrao {
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid var(--borda);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    outline: none;
+}
+.input-padrao:focus {
+    border-color: var(--primario);
+}

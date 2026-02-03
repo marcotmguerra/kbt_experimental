@@ -42,7 +42,6 @@
             <button id="btnSair" class="menu__item menu__item--botao" type="button">
               <i data-lucide="log-out"></i><span>Sair</span>
             </button>
-
             <p id="usuarioAdmin" class="sidebar__usuario">Usuário: —</p> 
           </div>
         </nav>
@@ -57,16 +56,17 @@
              <span class="material-symbols-outlined">arrow_back</span> Voltar
            </a>
         </div>
-        
       </header>
 
       <div class="dashboard-container">
         
         <section class="profile-header-card">
           <div class="profile-info">
-           
              <div>
                <h1 id="detAluno">Carregando...</h1>
+               <!-- O ID subtitulo foi adicionado aqui para evitar o erro no JS -->
+               <p id="subtitulo" style="margin-top: 4px; font-weight: 600; color: var(--texto-fraco);"></p>
+               
                <div class="profile-meta">
                  <span class="material-symbols-outlined">call</span> <span id="detWhatsapp">—</span>
                  <span class="dot-separator">•</span>
@@ -74,11 +74,11 @@
                </div>
              </div>
           </div>
-          
         </section>
 
         <div class="dashboard-grid">
           
+          <!-- Coluna Esquerda: Resumo e Forms -->
           <div class="col-left">
             <div class="card card-mini-resumo">
                 <div class="data-row-compact">
@@ -88,40 +88,31 @@
                 <span class="tag-version">HOJE</span>
                 <div class="data-row-compact">
                   <span class="label-mini">STATUS</span>
-                  
                   <div class="profile-status">
-            <span id="badgeStatus" class="status-pill">Pendente</span>
-            
-          </div>
+                    <span id="badgeStatus" class="status-pill">Pendente</span>
+                  </div>
                 </div>
             </div>
 
             <div class="card card-section card-forms-container">
                <h3><span class="material-symbols-outlined">assignment</span> Questionário (Forms)</h3>
+               <!-- Container onde as respostas do Kids/Adulto serão injetadas -->
                <div id="detFormRaw" class="lista-detalhes-vertical">
+                  <p class="vazio">Carregando formulário...</p>
                </div>
             </div>
           </div>
 
+          <!-- Coluna Central: Avaliação -->
           <div class="col-center">
              <section class="card card-main-display">
-                <div class="card-header">
+                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                   <h3><span class="material-symbols-outlined">analytics</span> Avaliação Técnica</h3>
                   
-                                  <!-- Botão para abrir a legenda -->
-<div style="margin-bottom: 15px;">
-    <button
-        id="btnVerLegenda"
-        class="btn btn--secundario btn-legenda-mini"
-        type="button"
-        aria-label="Ver legenda das notas"
-        title="Ver legenda das notas"
-        
-    >
-       Legenda <span class="material-symbols-outlined">help_outline</span> 
-    </button>
-</div>
-
+                  <!-- Botão discreto para abrir a legenda -->
+                  <button id="btnVerLegenda" class="btn-help-circle" type="button" title="Ver legenda das notas">Legenda
+                    
+                  </button>
                 </div>
 
                 <div id="seletorCategoria" style="margin: 20px 0; display: none;">
@@ -132,34 +123,18 @@
                   </div>
                 </div>
 
-
-
-
-<!-- Estrutura do Modal de Legenda -->
-<div id="modalLegenda" class="modal-legenda" style="display: none;">
-    <div class="modal-legenda__conteudo">
-        <div class="modal-legenda__header">
-            <h3 id="tituloLegenda">Legenda de Avaliação</h3>
-            <button id="fecharLegenda" class="icon-btn"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div id="corpoLegenda" class="modal-legenda__body">
-            <!-- O texto da legenda será inserido aqui via JS -->
-        </div>
-    </div>
-</div>
-
                 <div id="containerFeedbackCoach" style="display: none;">
                   <form id="formRelatorioVivencia">
                     <div id="camposRelatorio" class="grid-notas"></div>
                     
                     <div class="insight-area">
                         <p class="label-input">Avaliação do coach:</p>
-                        <textarea id="txtTraducaoPratica" placeholder="O sistema sugerirá..."></textarea>
+                        <textarea id="txtTraducaoPratica" placeholder="O sistema sugerirá uma análise com base nas notas..."></textarea>
                     </div>
 
                     <div id="recomendacaoArea" class="rec-box">
                         <p>RECOMENDAÇÃO SUGERIDA</p>
-                        <div id="textoRecomendacaoAuto">Selecione as notas...</div>
+                        <div id="textoRecomendacaoAuto">Preencha as notas para ver a recomendação...</div>
                     </div>
 
                     <button type="submit" class="btn btn--primario btn-full">Salvar Relatório</button>
@@ -167,7 +142,7 @@
                 </div>
 
                 <div id="containerFeedbackAdmin" style="display: none;">
-                    <button id="btnExportarPDFVivencia" class="btn btn--secundario btn-full">
+                    <button id="btnExportarPDFVivencia" class="btn btn--secundario btn-full" style="margin-bottom: 20px;">
                         <span class="material-symbols-outlined">picture_as_pdf</span> Exportar PDF
                     </button>
                     <div id="leituraRelatorio" class="feedback-admin-box"></div>
@@ -175,53 +150,68 @@
              </section>
           </div>
 
+          <!-- Coluna Direita: Ações -->
           <div class="col-right">
             <div class="card card-section highlight-card">
-              <h3><span class="material-symbols-outlined"></span> Gestão do aluno</h3>
+              <h3><span class="material-symbols-outlined">settings</span> Gestão</h3>
               
               <div class="acoes-buttons-stack">
-                <a id="btnWhatsapp" class="btn btn--whatsapp" target="_blank">
-                  <span class="material-symbols-outlined">chat</span> WhatsApp
+                <a id="btnWhatsapp" class="btn btn--whatsapp" target="_blank" href="#">
+                  <span class="material-symbols-outlined">chat</span> Chamar WhatsApp
                 </a>
 
-                <div id="containerAdminAcoes" class="admin-stack" style="display: none;">
-                    <div class="row-buttons">
-                      <button id="btnConfirmar" class="btnConfirmar">Confirmar</button>
-                      <button id="btnFaltou" class="btn btn--erro">Faltou</button>
+                <div id="containerAdminAcoes" class="admin-stack" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+                    <div class="row-buttons" style="display: flex; gap: 10px; margin-bottom: 15px;">
+                      <button id="btnConfirmar" class="btn-confirmar-viva" style="flex: 1;">Confirmar</button>
+                      <button id="btnFaltou" class="btn btn--erro" style="flex: 1;">Faltou</button>
                     </div>
                     
-                    <label class="check-recepcao-styled">
+                    <label class="check-recepcao-styled" style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; cursor: pointer;">
                         <input type="checkbox" id="checkRecepcao"> 
-                        <span>Levou à recepção?</span>
+                        <span style="font-size: 13px; font-weight: 700;">Levou à recepção?</span>
                     </label>
 
-                    <section id="secaoAdminVenda" class="card-warning" style="display: none;">
-                        <div class="admin-venda-wrapper">
-                        <span>Matriculado?</span>
-                        <input type="checkbox" id="checkMatriculado">
+                    <section id="secaoAdminVenda" class="card-warning" style="display: none; background: #fffbeb; border: 1px solid #fde68a; padding: 10px; border-radius: 12px;">
+                        <div class="admin-venda-wrapper" style="display: flex; justify-content: flex-start ; align-items: center; gap:8px;">
+                          <input type="checkbox" id="checkMatriculado">
+                          <span style="font-size: 13px; font-weight: 800; color: #92400e;">Matriculado?</span>
+                          
                         </div>
                     </section>
                 </div>
               </div>
             </div>
           </div> 
-          </div>
+        </div>
       </div>
     </main>
   </div>
 
+  <!-- Modal de Legenda -->
+  <div id="modalLegenda" class="modal-legenda" style="display: none;">
+    <div class="modal-legenda__conteudo">
+        <div class="modal-legenda__header">
+            <h3 id="tituloLegenda">Legenda de Avaliação</h3>
+            <button id="fecharLegenda" class="icon-btn" type="button"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div id="corpoLegenda" class="modal-legenda__body">
+            <!-- Texto injetado via JS -->
+        </div>
+    </div>
+  </div>
+
   <script type="module" src="../js/guardas.js"></script>
   <script type="module" src="../js/professor.detalhe.js"></script>
+  
   <script>
     // Inicializa icones Lucide
     lucide.createIcons();
+    
+    // Registro Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('../sw.js');
+    }
   </script>
-  
-  <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('../sw.js');
-  }
-</script>
 
 </body>
 </html>

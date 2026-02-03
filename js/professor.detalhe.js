@@ -39,20 +39,36 @@ async function carregar() {
     // Exibir Responsável se existir
     const elSub = document.getElementById("subtitulo");
     if (ag.responsavel_nome) {
-        elSub.innerHTML = `Aluno: ${ag.aluno_nome} <br> <span style="color:var(--primario); font-weight:800;">Responsável: ${ag.responsavel_nome}</span>`;
+        elSub.innerHTML = `<span style="color:var(--primario); font-weight:800;">Responsável: ${ag.responsavel_nome}</span>`;
     }
 
-    // DADOS BRUTOS
+    // DADOS BRUTOS (RESOLVIDO PARA KIDS E ADULTO)
     const containerForms = document.getElementById("detFormRaw");
     if (ag.form_raw) {
         try {
             const dados = typeof ag.form_raw === 'string' ? JSON.parse(ag.form_raw) : ag.form_raw;
-            containerForms.innerHTML = Object.entries(dados).map(([k, v]) => `
-                <div class="mini-card" style="margin-bottom:8px; background:#fff; border:1px solid #eee;">
-                    <small style="color:gray; font-weight:800; text-transform:uppercase; font-size:10px;">${k.replace(/_/g, ' ')}</small><br>
-                    <span style="font-size:14px;">${v || '—'}</span>
-                </div>`).join('');
-        } catch (e) { containerForms.innerHTML = "<p>Erro ao ler formulário.</p>"; }
+            
+            containerForms.innerHTML = Object.entries(dados).map(([k, v]) => {
+                // Trata o valor: Se for Array (padrão Google Forms), junta com vírgula. Se não, usa o valor.
+                const valorFinal = Array.isArray(v) ? v.join(', ') : v;
+                
+                // Pula campos vazios para não poluir a tela
+                if (!valorFinal || valorFinal === "") return "";
+
+                return `
+                <div class="mini-card" style="margin-bottom:8px; background:#fff; border:1px solid #eee; padding: 10px; border-radius: 8px;">
+                    <small style="color:var(--primario); font-weight:800; text-transform:uppercase; font-size:10px; display:block; margin-bottom: 4px;">
+                        ${k.replace(/_/g, ' ').replace(/\n/g, ' ')}
+                    </small>
+                    <span style="font-size:14px; font-weight: 600; line-height: 1.4; display: block;">
+                        ${valorFinal}
+                    </span>
+                </div>`;
+            }).join('');
+        } catch (e) { 
+            console.error("Erro ao processar form_raw:", e);
+            containerForms.innerHTML = "<p>Erro ao ler formulário.</p>"; 
+        }
     }
 
     const { data: { session } } = await supabase.auth.getSession();
@@ -301,9 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (btnVer) {
         btnVer.onclick = () => {
-            // categoriaSelecionada é a variável global que você já tem no seu script
             const cat = typeof categoriaSelecionada !== 'undefined' ? categoriaSelecionada : 'adulto';
-            
             titulo.textContent = `Legenda de Notas — ${cat.toUpperCase()}`;
             corpo.innerHTML = TEXTOS_LEGENDA[cat];
             modal.style.display = "flex";
@@ -314,12 +328,9 @@ document.addEventListener("DOMContentLoaded", () => {
         btnFechar.onclick = () => modal.style.display = "none";
     }
 
-    // Fechar ao clicar fora do modal
     window.onclick = (event) => {
         if (event.target == modal) modal.style.display = "none";
     };
 });
-
-
 
 document.addEventListener("DOMContentLoaded", carregar);
