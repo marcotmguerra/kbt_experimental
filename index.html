@@ -22,9 +22,38 @@
   <link rel="stylesheet" href="css/base.css" />
 
   <style>
-    /* Estilo emergencial para garantir que o banner não apareça quebrado antes do PWA detectar */
-    #pwa-install-banner { visibility: hidden; }
-    #pwa-install-banner.show { visibility: visible; }
+    /* Estilo para o banner PWA deslizar */
+    #pwa-install-banner { 
+      visibility: hidden; 
+      transition: bottom 0.5s ease-in-out;
+    }
+    #pwa-install-banner.show { 
+      visibility: visible !important; 
+      bottom: 0 !important;
+    }
+
+    /* Estilo do Checkbox Lembrar-me */
+    .lembrar-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+    .lembrar-box input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primario);
+      cursor: pointer;
+    }
+    .lembrar-box label {
+      font-size: 14px;
+      color: var(--texto-fraco);
+      font-weight: 500;
+      margin: 0;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+    }
   </style>
 </head>
 
@@ -47,6 +76,12 @@
       <label for="senha">Senha</label>
       <input id="senha" name="senha" type="password" required placeholder="••••••••" />
       
+      <!-- Checkbox Mantenha-me conectado -->
+      <div class="lembrar-box">
+        <input type="checkbox" id="lembrar" name="lembrar" checked>
+        <label for="lembrar">Mantenha-me conectado</label>
+      </div>
+      
       <button id="btnEntrar" type="submit" style="margin-top: 14px; width: 100%;">Entrar</button>
 
       <p id="msgCarregando" hidden style="margin-top:10px; text-align: center;">Entrando…</p>
@@ -68,7 +103,7 @@
         <img src="img/KBT_logo2.png" alt="Logo KBT" class="pwa-logo">
         <div class="pwa-text">
           <strong>Instalar SAE Kabuto?</strong>
-          <p>Adicione à tela inicial para acesso rápido e melhor experiência.</p>
+          <p>Acesse como um app para uma melhor experiência.</p>
         </div>
       </div>
       <div class="pwa-actions">
@@ -78,31 +113,44 @@
     </div>
   </div>
 
-  <!-- Scripts -->
+  <!-- Scripts Principais -->
   <script type="module" src="js/autenticacao.js"></script>
   <script type="module" src="js/pwa-install.js"></script>
   
+  <!-- Ícones -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>lucide.createIcons();</script>
 
-  <script>
-    // 1. GERENCIAMENTO DE SESSÃO
-    document.addEventListener("DOMContentLoaded", () => {
-        // Verifica se existe sessão no Supabase (ajuste a chave se necessário)
-        const session = localStorage.getItem('sb-access-token') || localStorage.getItem('usuario_logado');
+  <!-- Lógica de Sessão e Service Worker -->
+  <script type="module">
+    import { supabase } from './js/supabaseCliente.js';
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        // 1. Verifica sessão ativa no Supabase
+        const { data: { session } } = await supabase.auth.getSession();
+
         if (session) {
-            window.location.href = "paginas/professor.html"; 
+            // Se logado, busca o perfil para redirecionar ao local correto
+            const { data: perfil } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', session.user.id)
+                .single();
+
+            if (perfil?.role === 'admin') {
+                window.location.href = "paginas/admin.html";
+            } else {
+                window.location.href = "paginas/professor.html";
+            }
+        }
+
+        // 2. Registro do Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('✅ PWA: Service Worker Ativo'))
+                .catch(err => console.error('❌ PWA: Erro no SW', err));
         }
     });
-
-    // 2. REGISTRO DO SERVICE WORKER
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('✅ SW registrado:', reg.scope))
-          .catch(err => console.log('❌ Erro no SW:', err));
-      });
-    }
   </script>
 
 </body>
