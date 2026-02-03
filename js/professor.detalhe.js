@@ -36,7 +36,13 @@ async function carregar() {
     document.getElementById("badgeStatus").textContent = ag.status || "pendente";
     document.getElementById("btnWhatsapp").href = linkWhatsApp(ag.aluno_whatsapp);
 
-    // DADOS BRUTOS (FORMS)
+    // Exibir Responsável se existir
+    const elSub = document.getElementById("subtitulo");
+    if (ag.responsavel_nome) {
+        elSub.innerHTML = `Aluno: ${ag.aluno_nome} <br> <span style="color:var(--primario); font-weight:800;">Responsável: ${ag.responsavel_nome}</span>`;
+    }
+
+    // DADOS BRUTOS
     const containerForms = document.getElementById("detFormRaw");
     if (ag.form_raw) {
         try {
@@ -64,12 +70,10 @@ function obterTextoInsight(categoria, idPergunta, nota) {
     return cat.alto;
 }
 
-// --- AQUI ESTÁ A LÓGICA NOVA ---
 function atualizarAutomacao() {
     let notaMinima = 6, idPiorNota = "", soma = 0;
     const selects = document.querySelectorAll(".nota-input");
     
-    // 1. Coleta notas e descobre a pior área
     selects.forEach(sel => {
         const nota = parseFloat(sel.value);
         soma += nota;
@@ -77,48 +81,25 @@ function atualizarAutomacao() {
     });
     
     const media = soma / (selects.length || 1);
-
-    // 2. Preenche o Texto de Tradução Prática (baseado na pior nota)
     if (idPiorNota) {
         document.getElementById("txtTraducaoPratica").value = obterTextoInsight(categoriaSelecionada, idPiorNota, notaMinima);
     }
     
-    // 3. Lógica Inteligente de Recomendação
     let rec = "";
-
     if (categoriaSelecionada === 'kids') {
-        // KIDS: Quanto pior a nota, mais frequência precisa
         if (media <= 2.5) rec = "3x na semana (Prioridade: Desenvolvimento Motor)";
         else if (media <= 4.0) rec = "2x na semana (Foco em Consistência)";
         else rec = "1x a 2x na semana (Manutenção/Lazer)";
-    
     } else {
-        // ADULTO: O programa depende da fraqueza principal
-        if (media >= 4.5) {
-            // Alta Performance
-            rec = "Programa CROSSFIT (Foco em Performance)";
-        } else {
-            // Define o programa base pela pior nota
+        if (media >= 4.5) rec = "Programa CROSSFIT (Foco em Performance)";
+        else {
             switch (idPiorNota) {
-                case 'forca':
-                case 'core':
-                case 'mobilidade':
-                    rec = "Programa STRONG (3x) + Cardio (2x)";
-                    break;
-                case 'cardio':
-                case 'resposta':
-                    // Se for cardio ruim, joga pro Cardio & Burn ou Hyrox
-                    rec = "Programa CARDIO & BURN (3x) + Strong (1x)";
-                    break;
-                default:
-                    // Caso genérico ou intermediário (Ex: Concurso geralmente cai aqui ou acima)
-                    rec = "Programa HYROX (2x) + Strong (2x)";
-                    break;
+                case 'forca': case 'core': case 'mobilidade': rec = "Programa STRONG (3x) + Cardio (2x)"; break;
+                case 'cardio': case 'resposta': rec = "Programa CARDIO & BURN (3x) + Strong (1x)"; break;
+                default: rec = "Programa HYROX (2x) + Strong (2x)"; break;
             }
         }
     }
-
-    // Atualiza o texto na tela
     document.getElementById("textoRecomendacaoAuto").textContent = rec;
 }
 
@@ -136,8 +117,6 @@ window.alternarRelatorio = (tipo) => {
         </div>`).join('');
 
     document.querySelectorAll(".nota-input").forEach(sel => sel.addEventListener("change", atualizarAutomacao));
-    
-    // Reseta o texto ao trocar de categoria
     document.getElementById("txtTraducaoPratica").value = "";
     document.getElementById("textoRecomendacaoAuto").textContent = "Preencha as notas...";
 };
@@ -153,13 +132,7 @@ function mostrarPainelProfessor(id, ag) {
         document.getElementById("txtTraducaoPratica").value = ag.relatorio_vivencia.traducao || "";
         setTimeout(() => {
             document.querySelectorAll(".nota-input").forEach(sel => sel.value = ag.relatorio_vivencia.notas[sel.dataset.id] || 0);
-            
-            // Se já tiver recomendação salva, usa ela, senão recalcula
-            if (ag.relatorio_vivencia.recomendacao) {
-                document.getElementById("textoRecomendacaoAuto").textContent = ag.relatorio_vivencia.recomendacao;
-            } else {
-                atualizarAutomacao();
-            }
+            document.getElementById("textoRecomendacaoAuto").textContent = ag.relatorio_vivencia.recomendacao || "Cálculo pendente...";
         }, 100);
     } else {
         window.alternarRelatorio('adulto');
@@ -169,14 +142,11 @@ function mostrarPainelProfessor(id, ag) {
         e.preventDefault();
         const notas = {};
         document.querySelectorAll(".nota-input").forEach(sel => notas[sel.dataset.id] = sel.value);
-        
         const payload = { 
-            categoria: categoriaSelecionada, 
-            notas, 
+            categoria: categoriaSelecionada, notas, 
             traducao: document.getElementById("txtTraducaoPratica").value, 
             recomendacao: document.getElementById("textoRecomendacaoAuto").textContent 
         };
-        
         await supabase.from("agendamentos").update({ relatorio_vivencia: payload }).eq("id", id);
         showToast("Relatório Salvo!");
     };
@@ -219,91 +189,59 @@ function mostrarPainelAdmin(id, ag) {
 async function gerarRelatorioTecnicoPDF(ag) {
     const rv = ag.relatorio_vivencia;
     const nomeCoach = ag.profiles?.nome || "Responsável Técnico";
-
     const content = document.createElement("div");
 
-    content.style.cssText = "width: 210mm; height: 296mm; padding: 10mm 15mm 30mm 15mm; font-family: 'Helvetica', sans-serif; color: #111; background: white; box-sizing: border-box; margin: 0; display: flex; flex-direction: column;";
+    content.style.cssText = "width: 210mm; padding: 10mm 15mm; font-family: 'Helvetica', sans-serif; color: #111; background: white;";
 
     content.innerHTML = `
-        <div style="flex: 1;">
-            
-            <div style="border-bottom: 3px solid #400c88; padding-bottom: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
-                
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <img src="../img/KBT_logo2.png" alt="Logo KBT" style="height: 60px; width: auto; object-fit: contain;" class="logo2-icon">
-                    
-                    <div>
-                        <h1 style="color: #400c88; margin: 0; padding: 0; font-size: 16pt; font-weight: 900; line-height: 1;">RELATÓRIO DE VIVÊNCIA</h1>
-                        <p style="margin: 3px 0 0; font-weight: bold; color: #666; font-size: 9pt;">KABUTO CROSSFIT</p>
-                    </div>
-                </div>
-
-                <div style="text-align: right; font-size: 9pt;">
-                    <p style="margin:0;">Aluno: <strong>${ag.aluno_nome}</strong></p>
-                    <p style="margin:0;">Data: ${formatarDataBR(ag.data_aula)}</p>
+        <div style="border-bottom: 3px solid #400c88; padding-bottom: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <img src="../img/KBT_logo2.png" alt="Logo KBT" style="height: 60px;">
+                <div>
+                    <h1 style="color: #400c88; margin: 0; font-size: 16pt; font-weight: 900;">RELATÓRIO DE VIVÊNCIA</h1>
+                    <p style="margin: 3px 0 0; font-weight: bold; color: #666; font-size: 9pt;">KABUTO CROSSFIT</p>
                 </div>
             </div>
-
-            <h3 style="font-size: 10pt; text-transform: uppercase; color: #400c88; margin-bottom: 8px;"> Indicadores Técnicos Observados</h3>
-            
-            <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-                <thead>
-                    <tr style="background: #400c88; color: #fff;">
-                        <th style="padding: 6px; text-align: left; border: 1px solid #ddd; font-size: 9pt;">Capacidade Avaliada</th>
-                        <th style="padding: 6px; border: 1px solid #ddd; text-align: center; width: 50px; font-size: 9pt;">Nota</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${Object.keys(rv.notas).map(id => {
-                        const texto = obterTextoInsight(rv.categoria, id, rv.notas[id]);
-                        return `
-                            <tr>
-                                <td style="padding: 6px; border: 1px solid #ddd; font-size: 9pt; line-height: 1.2;">
-                                    <strong style="color: #400c88;">${INSIGHTS_RELATORIO[rv.categoria][id].label}</strong><br>
-                                    <span style="color: #444;">${texto}</span>
-                                </td>
-                                <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-weight: 900; font-size: 11pt; color: #400c88;">${rv.notas[id]}</td>
-                            </tr>`;
-                    }).join('')}
-                </tbody>
-            </table>
-
-            <div style="background: #f4f4f4; padding: 12px; border-left: 5px solid #400c88; border-radius: 5px; margin-bottom: 15px;">
-                <h4 style="margin: 0 0 5px; color: #400c88; font-size: 9pt; text-transform: uppercase;"> ANÁLISE DO COACH</h4>
-                <p style="font-size: 9pt; line-height: 1.3; color: #222; margin: 0;">"${rv.traducao}"</p>
+            <div style="text-align: right; font-size: 9pt;">
+                <p style="margin:0;">Aluno: <strong>${ag.aluno_nome}</strong></p>
+                ${ag.responsavel_nome ? `<p style="margin:0;">Responsável: <strong>${ag.responsavel_nome}</strong></p>` : ''}
+                <p style="margin:0;">Data: ${formatarDataBR(ag.data_aula)}</p>
             </div>
-
-            <div style="background: #400c88; color: #fff; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 10px;">
-                <p style="margin: 0; font-size: 9pt; text-transform: uppercase; opacity: 0.9; letter-spacing: 1px;">PROGRAMA SUGERIDO</p>
-                <h2 style="margin: 5px 0 0; font-size: 16pt; font-weight: 900;">${rv.recomendacao}</h2>
-            </div>
-
         </div>
 
-        <div style="margin-top: auto; text-align: center; padding-top: 5px;">
+        <h3 style="font-size: 10pt; text-transform: uppercase; color: #400c88; margin-bottom: 8px;"> Indicadores Técnicos Observados</h3>
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
+            <tr style="background: #400c88; color: #fff;">
+                <th style="padding: 6px; text-align: left; border: 1px solid #ddd; font-size: 9pt;">Capacidade Avaliada</th>
+                <th style="padding: 6px; border: 1px solid #ddd; text-align: center; width: 50px; font-size: 9pt;">Nota</th>
+            </tr>
+            ${Object.keys(rv.notas).map(id => `
+                <tr>
+                    <td style="padding: 6px; border: 1px solid #ddd; font-size: 9pt;">
+                        <strong style="color: #400c88;">${INSIGHTS_RELATORIO[rv.categoria][id].label}</strong><br>
+                        <span>${obterTextoInsight(rv.categoria, id, rv.notas[id])}</span>
+                    </td>
+                    <td style="padding: 6px; border: 1px solid #ddd; text-align: center; font-weight: 900; color: #400c88;">${rv.notas[id]}</td>
+                </tr>`).join('')}
+        </table>
+
+        <div style="background: #f4f4f4; padding: 12px; border-left: 5px solid #400c88; margin-bottom: 15px;">
+            <h4 style="margin: 0 0 5px; color: #400c88; font-size: 9pt;">ANÁLISE DO COACH</h4>
+            <p style="font-size: 9pt; margin: 0;">"${rv.traducao}"</p>
+        </div>
+
+        <div style="background: #400c88; color: #fff; padding: 15px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
+            <p style="margin: 0; font-size: 8pt; text-transform: uppercase;">PROGRAMA SUGERIDO</p>
+            <h2 style="margin: 5px 0 0; font-size: 16pt;">${rv.recomendacao}</h2>
+        </div>
+
+        <div style="text-align: center; margin-top: 20px;">
             <div style="width: 60mm; border-top: 1px solid #000; margin: 0 auto 5px;"></div>
             <p style="margin: 0; font-weight: bold; font-size: 10pt;">Coach ${nomeCoach}</p>
-            <p style="margin: 0; font-size: 8pt; color: #666; text-transform: uppercase;">Avaliador Técnico Kabuto</p>
         </div>
     `;
 
-    const opt = {
-        margin: 0, 
-        filename: `Relatorio_Kabuto_${ag.aluno_nome.replace(/\s+/g, '_')}.pdf`,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { 
-            scale: 2, 
-            useCORS: true, 
-            logging: false,
-            scrollY: 0,
-            scrollX: 0,
-            x: 0,
-            windowWidth: 800
-        }, 
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
-    html2pdf().set(opt).from(content).save();
+    html2pdf().set({ margin: 0, filename: `Relatorio_Kabuto_${ag.aluno_nome}.pdf`, jsPDF: { format: 'a4' } }).from(content).save();
 }
 
 document.addEventListener("DOMContentLoaded", carregar);

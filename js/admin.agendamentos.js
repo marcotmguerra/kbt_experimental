@@ -1,7 +1,6 @@
 import { supabase } from "./supabaseCliente.js";
 import { formatarDataBR, showToast } from "./util.js";
 
-// Variáveis globais
 let todosAgendamentos = [];
 let todosCoaches = [];
 let dadosFiltradosParaExportar = [];
@@ -26,12 +25,10 @@ async function inicializar() {
 
     popularFiltroCoaches(todosCoaches);
     
-    // Define o mês atual no filtro por padrão
     const mesAtualNum = String(new Date().getMonth() + 1).padStart(2, '0');
     const selectMes = document.getElementById("filtroMes");
     if (selectMes) selectMes.value = mesAtualNum;
 
-    // Atualiza os Cards e a Tabela
     atualizarCardsEstatisticos(todosAgendamentos);
     filtrarERenderizar();
 
@@ -54,16 +51,11 @@ function popularFiltroCoaches(coaches) {
   });
 }
 
-/**
- * Lógica de Estatísticas: Segunda a Domingo
- */
 function atualizarCardsEstatisticos(agendamentos) {
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
 
-  // --- CÁLCULO DA SEMANA ATUAL (Segunda a Domingo) ---
-  const diaSemana = hoje.getDay(); // 0 (Dom) a 6 (Sáb)
-  // Ajuste para segunda ser o primeiro dia (1) e domingo o último (7)
+  const diaSemana = hoje.getDay(); 
   const diffParaSegunda = hoje.getDate() - (diaSemana === 0 ? 6 : diaSemana - 1);
   
   const segundaFeira = new Date(hoje);
@@ -74,14 +66,12 @@ function atualizarCardsEstatisticos(agendamentos) {
   domingo.setDate(segundaFeira.getDate() + 6);
   domingo.setHours(23, 59, 59, 999);
 
-  // --- SEMANA PASSADA (Segunda a Domingo anterior) ---
   const segundaPassada = new Date(segundaFeira);
   segundaPassada.setDate(segundaFeira.getDate() - 7);
   
   const domingoPassado = new Date(domingo);
   domingoPassado.setDate(domingo.getDate() - 7);
 
-  // --- FILTRAGEM ---
   const converterData = (dataStr) => {
     const d = new Date(dataStr);
     d.setMinutes(d.getMinutes() + d.getTimezoneOffset());
@@ -103,7 +93,6 @@ function atualizarCardsEstatisticos(agendamentos) {
     return d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear();
   }).length;
 
-  // --- ATUALIZAR INTERFACE ---
   const nomesMeses = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
   
   document.getElementById("statSemana").textContent = totalSemanaAtual;
@@ -156,7 +145,12 @@ function filtrarERenderizar() {
   lista.innerHTML = dadosFiltradosParaExportar.map(ag => `
     <tr>
       <td>${formatarDataBR(ag.data_aula)}</td>
-      <td><strong>${ag.aluno_nome ?? 'Sem Nome'}</strong></td>
+      <td>
+        <div class="aluno">
+            <strong>${ag.aluno_nome ?? 'Sem Nome'}</strong>
+            ${ag.responsavel_nome ? `<br><small style="color:var(--primario); font-weight:800; font-size:10px;">RESP: ${ag.responsavel_nome}</small>` : ''}
+        </div>
+      </td>
       <td>${ag.profiles?.nome ?? '<span style="color:gray">Não atribuído</span>'}</td>
       <td><span class="status-pill status-${ag.status}">${ag.status ?? 'pendente'}</span></td>
       <td>${ag.matriculado ? '✅ Sim' : '❌ Não'}</td>
@@ -174,9 +168,9 @@ function exportarCSV() {
     return;
   }
 
-  let csv = "Data;Aluno;Coach;Status;Matriculado;Tipo\n";
+  let csv = "Data;Aluno;Responsavel;Coach;Status;Matriculado;Tipo\n";
   dadosFiltradosParaExportar.forEach(item => {
-    csv += `${formatarDataBR(item.data_aula)};${item.aluno_nome || ""};${item.profiles?.nome || "N/A"};${item.status || "pendente"};${item.matriculado ? "Sim" : "Nao"};${item.tipo_aula || "Experimental"}\n`;
+    csv += `${formatarDataBR(item.data_aula)};${item.aluno_nome || ""};${item.responsavel_nome || ""};${item.profiles?.nome || "N/A"};${item.status || "pendente"};${item.matriculado ? "Sim" : "Nao"};${item.tipo_aula || "Experimental"}\n`;
   });
 
   const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
@@ -189,7 +183,6 @@ function exportarCSV() {
   document.body.removeChild(link);
 }
 
-// Event Listeners
 document.addEventListener("DOMContentLoaded", inicializar);
 document.getElementById("buscaAgenda")?.addEventListener("input", filtrarERenderizar);
 document.getElementById("filtroMes")?.addEventListener("change", filtrarERenderizar);
