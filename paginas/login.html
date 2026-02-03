@@ -5,16 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Login — SAE</title>
 
-  <!-- Fonte Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="../css/base.css" />
+  <link rel="manifest" href="../manifest.json">
+  <meta name="theme-color" content="#400c88">
 
-<link rel="manifest" href="../manifest.json">
-<meta name="theme-color" content="#400c88">
-
+  <script>
+    window.deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Impede o mini-infobar padrão do navegador (Chrome 67+)
+      e.preventDefault();
+      // Salva o evento para disparar mais tarde
+      window.deferredPrompt = e;
+      console.log('📡 Evento beforeinstallprompt capturado!');
+    });
+  </script>
 </head>
 
 <body class="centralizado">
@@ -40,7 +48,6 @@
       <p id="msgErro" role="alert" hidden style="margin-top:10px; color:#b91c1c; font-weight:700; text-align: center; font-family: Inter;"></p>
     </form>
 
-    <!-- NOVA SEÇÃO: Link para Cadastro -->
     <div style="margin-top: 25px; text-align: center; border-top: 1px solid var(--borda); padding-top: 20px;">
       <p style="font-family: Inter; font-size: 14px; color: var(--texto-fraco);">
         É professor e não tem conta? <br>
@@ -50,39 +57,92 @@
   </main>
 
   <script type="module" src="../js/autenticacao.js"></script>
-  
-  <!-- LUCIDE -->
+
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     lucide.createIcons();
   </script>
-  
-  <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/sw.js', { scope: '/' });
-}
-</script>
 
-<!-- Banner de Instalação PWA -->
-<div id="pwa-install-banner" class="pwa-banner">
-  <div class="pwa-content">
-    <div class="pwa-header">
-      <!-- Certifique-se de que o caminho da imagem está correto para o seu projeto -->
-      <img src="../img/KBT_logo2.png" alt="Logo KBT" class="logo2-icon">
-      <div class="pwa-text">
-        <strong>Deseja adicionar o Checklist à tela inicial?</strong>
-        <p>Acesse o sistema como um aplicativo direto do seu celular.</p>
+  <div id="pwa-install-banner" class="pwa-banner" style="display: none;">
+    <div class="pwa-content">
+      <div class="pwa-header">
+        <img src="../img/KBT_logo2.png" alt="Logo KBT" class="logo2-icon">
+        <div class="pwa-text">
+          <strong>Instalar App SAE?</strong>
+          <p>Acesse o sistema direto da tela inicial.</p>
+        </div>
+      </div>
+      <div class="pwa-actions">
+        <button id="btn-pwa-cancel" class="btn-pwa-secondary">Agora não</button>
+        <button id="btn-pwa-install" class="btn-pwa-primary">Instalar</button>
       </div>
     </div>
-    <div class="pwa-actions">
-      <button id="btn-pwa-cancel" class="btn-pwa-secondary">Agora não</button>
-      <button id="btn-pwa-install" class="btn-pwa-primary">Adicionar</button>
-    </div>
   </div>
-</div>
 
-<!-- Script de lógica -->
-<script type="module" src="../js/pwa-install.js"></script>
+  <script>
+    // 1. Registro do Service Worker
+    if ('serviceWorker' in navigator) {
+      // IMPORTANTE: O arquivo sw.js DEVE estar na raiz do domínio (ex: public/sw.js ou www/sw.js)
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then(reg => console.log('✅ Service Worker registrado no escopo:', reg.scope))
+        .catch(err => console.error('❌ Falha no Service Worker:', err));
+    }
+
+    // 2. Lógica do Banner de Instalação
+    const pwaBanner = document.getElementById('pwa-install-banner');
+    const btnInstall = document.getElementById('btn-pwa-install');
+    const btnCancel = document.getElementById('btn-pwa-cancel');
+
+    // Função para mostrar o banner
+    function showInstallPromotion() {
+      if(pwaBanner) pwaBanner.style.display = 'flex'; // ou 'block', dependendo do seu CSS
+    }
+
+    // Função para esconder o banner
+    function hideInstallPromotion() {
+      if(pwaBanner) pwaBanner.style.display = 'none';
+    }
+
+    // Verifica se o evento já foi capturado no head
+    if (window.deferredPrompt) {
+      showInstallPromotion();
+    } else {
+      // Se ainda não disparou (internet lenta ou carregamento assíncrono), ouve novamente aqui por segurança
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        window.deferredPrompt = e;
+        showInstallPromotion();
+      });
+    }
+
+    // Clique no botão INSTALAR
+    if(btnInstall) {
+      btnInstall.addEventListener('click', async () => {
+        hideInstallPromotion();
+        if (window.deferredPrompt) {
+          window.deferredPrompt.prompt();
+          const { outcome } = await window.deferredPrompt.userChoice;
+          console.log(`Usuário escolheu: ${outcome}`);
+          window.deferredPrompt = null;
+        }
+      });
+    }
+
+    // Clique no botão CANCELAR
+    if(btnCancel) {
+      btnCancel.addEventListener('click', () => {
+        hideInstallPromotion();
+        // Opcional: salvar cookie/localStorage para não mostrar novamente hoje
+      });
+    }
+
+    // Escuta se o app foi instalado com sucesso para limpar tudo
+    window.addEventListener('appinstalled', () => {
+      hideInstallPromotion();
+      window.deferredPrompt = null;
+      console.log('PWA instalado com sucesso');
+    });
+  </script>
 
 </body>
 </html>
