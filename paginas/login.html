@@ -59,5 +59,26 @@
   }
 </script>
 
+<!-- Banner de Instalação PWA -->
+<div id="pwa-install-banner" class="pwa-banner">
+  <div class="pwa-content">
+    <div class="pwa-header">
+      <!-- Certifique-se de que o caminho da imagem está correto para o seu projeto -->
+      <img src="assets/img/Logo_do_BEMAD.png" alt="Logo" class="pwa-logo">
+      <div class="pwa-text">
+        <strong>Deseja adicionar o Checklist à tela inicial?</strong>
+        <p>Acesse o sistema como um aplicativo direto do seu celular.</p>
+      </div>
+    </div>
+    <div class="pwa-actions">
+      <button id="btn-pwa-cancel" class="btn-pwa-secondary">Agora não</button>
+      <button id="btn-pwa-install" class="btn-pwa-primary">Adicionar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Script de lógica -->
+<script type="module" src="../js/pwa-install.js"></script>
+
 </body>
 </html>

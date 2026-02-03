@@ -200,3 +200,87 @@ select:focus {
 .tabela__acao button:hover {
   background: rgba(0,0,0,0.05);
 }
+
+/* BANNER PWA ESTILO GLOBO */
+.pwa-banner {
+  position: fixed !important;
+  bottom: -100%; /* Começa escondido abaixo da tela */
+  left: 0;
+  width: 100%;
+  background-color: #ffffff !important;
+  z-index: 999999 !important; /* Fica na frente de tudo */
+  padding: 20px;
+  border-radius: 24px 24px 0 0;
+  box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
+  transition: bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: none; /* Escondido por padrão */
+}
+
+/* Classe ativada pelo JS */
+.pwa-banner.show {
+  display: block !important;
+  bottom: 0 !important;
+}
+
+.pwa-content {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.pwa-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.pwa-logo {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.pwa-text strong {
+  display: block;
+  font-size: 16px;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.pwa-text p {
+  font-size: 13px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.pwa-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-pwa-primary, .btn-pwa-secondary {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s;
+}
+
+.btn-pwa-primary { 
+  background: --var(--primario)
+  color white; 
+}
+
+.btn-pwa-secondary { 
+  background: #f1f5f9; 
+  color: #64748b; 
+}
+
+.btn-pwa-primary:active, .btn-pwa-secondary:active {
+  transform: scale(0.96);
+}
