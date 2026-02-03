@@ -54,7 +54,7 @@
       <header class="topbar-dashboard">
         <div class="breadcrumbs">
            <a href="javascript:history.back()" class="link-voltar">
-             <span class="material-symbols-outlined">arrow_back</span> Voltar / Alunos / Ficha Técnica
+             <span class="material-symbols-outlined">arrow_back</span> Voltar
            </a>
         </div>
         
@@ -85,8 +85,10 @@
                   <span class="label-mini">TIPO</span>
                   <strong id="detTipo">—</strong>
                 </div>
+                <span class="tag-version">HOJE</span>
                 <div class="data-row-compact">
                   <span class="label-mini">STATUS</span>
+                  
                   <div class="profile-status">
             <span id="badgeStatus" class="status-pill">Pendente</span>
             
@@ -105,7 +107,21 @@
              <section class="card card-main-display">
                 <div class="card-header">
                   <h3><span class="material-symbols-outlined">analytics</span> Avaliação Técnica</h3>
-                  <span class="tag-version">HOJE</span>
+                  
+                                  <!-- Botão para abrir a legenda -->
+<div style="margin-bottom: 15px;">
+    <button
+        id="btnVerLegenda"
+        class="btn btn--secundario btn-legenda-mini"
+        type="button"
+        aria-label="Ver legenda das notas"
+        title="Ver legenda das notas"
+        
+    >
+       Legenda <span class="material-symbols-outlined">help_outline</span> 
+    </button>
+</div>
+
                 </div>
 
                 <div id="seletorCategoria" style="margin: 20px 0; display: none;">
@@ -116,12 +132,28 @@
                   </div>
                 </div>
 
+
+
+
+<!-- Estrutura do Modal de Legenda -->
+<div id="modalLegenda" class="modal-legenda" style="display: none;">
+    <div class="modal-legenda__conteudo">
+        <div class="modal-legenda__header">
+            <h3 id="tituloLegenda">Legenda de Avaliação</h3>
+            <button id="fecharLegenda" class="icon-btn"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div id="corpoLegenda" class="modal-legenda__body">
+            <!-- O texto da legenda será inserido aqui via JS -->
+        </div>
+    </div>
+</div>
+
                 <div id="containerFeedbackCoach" style="display: none;">
                   <form id="formRelatorioVivencia">
                     <div id="camposRelatorio" class="grid-notas"></div>
                     
                     <div class="insight-area">
-                        <p class="label-input">Coach Insight (Automático):</p>
+                        <p class="label-input">Avaliação do coach:</p>
                         <textarea id="txtTraducaoPratica" placeholder="O sistema sugerirá..."></textarea>
                     </div>
 

@@ -244,4 +244,82 @@ async function gerarRelatorioTecnicoPDF(ag) {
     html2pdf().set({ margin: 0, filename: `Relatorio_Kabuto_${ag.aluno_nome}.pdf`, jsPDF: { format: 'a4' } }).from(content).save();
 }
 
+const TEXTOS_LEGENDA = {
+    kids: `
+        <div class="legenda-item">
+            <strong style="color: #d32f2f;">🔴 Nota 1 — Muito Abaixo (Crítico)</strong>
+            <p>Não organiza movimentos, se perde em comandos, evita participar. <br><b>Foco:</b> Segurança e confiança.</p>
+        </div>
+        <div class="legenda-item">
+            <strong style="color: #f57c00;">🟠 Nota 2 — Abaixo do Esperado</strong>
+            <p>Movimentos básicos sem fluidez, atenção oscila, reage lentamente. <br><b>Foco:</b> Repetição guiada.</p>
+        </div>
+        <div class="legenda-item">
+            <strong style="color: #fbc02d;">🟡 Nota 3 — Adequado</strong>
+            <p>Coordenação funcional mas inconsistente, interação social adequada. <br><b>Foco:</b> Constância e jogos.</p>
+        </div>
+        <div class="legenda-item">
+            <strong style="color: #388e3c;">🟢 Nota 4 — Acima da Média</strong>
+            <p>Boa organização, resposta rápida, mantém atenção, começa a liderar. <br><b>Foco:</b> Desafios e autonomia.</p>
+        </div>
+        <div class="legenda-item">
+            <strong style="color: #1976d2;">🔵 Nota 5 — Excelente</strong>
+            <p>Coordenação acima da média, atenção total, liderança natural. <br><b>Foco:</b> Complexidade e estímulos avançados.</p>
+        </div>
+    `,
+    adulto: `
+        <div class="legenda-item">
+            <strong style="color: #d32f2f;">🔴 Nota 1 — Muito Abaixo (Crítico)</strong>
+            <p>Fadiga precoce, perda de técnica, instabilidade de core, risco articular.</p>
+        </div>
+        <div class="legenda-item">
+            <strong style="color: #f57c00;">🟠 Nota 2 — Abaixo do Esperado</strong>
+            <p>Muitas compensações, técnica cai sob esforço, recuperação lenta.</p>
+        </div>
+        <div class="legenda-item">
+            <strong style="color: #fbc02d;">🟡 Nota 3 — Adequado</strong>
+            <p>Execução correta na maior parte, boa resposta inicial, força aceitável.</p>
+        </div>
+        <div class="legenda-item">
+            <strong style="color: #388e3c;">🟢 Nota 4 — Acima da Média</strong>
+            <p>Técnica consistente, boa resistência, recuperação eficiente.</p>
+        </div>
+        <div class="legenda-item">
+            <strong style="color: #1976d2;">🔵 Nota 5 — Excelente</strong>
+            <p>Domínio técnico total, sustenta alta intensidade, ótima leitura corporal.</p>
+        </div>
+    `
+};
+
+// Lógica para abrir/fechar modal
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("modalLegenda");
+    const btnVer = document.getElementById("btnVerLegenda");
+    const btnFechar = document.getElementById("fecharLegenda");
+    const corpo = document.getElementById("corpoLegenda");
+    const titulo = document.getElementById("tituloLegenda");
+
+    if (btnVer) {
+        btnVer.onclick = () => {
+            // categoriaSelecionada é a variável global que você já tem no seu script
+            const cat = typeof categoriaSelecionada !== 'undefined' ? categoriaSelecionada : 'adulto';
+            
+            titulo.textContent = `Legenda de Notas — ${cat.toUpperCase()}`;
+            corpo.innerHTML = TEXTOS_LEGENDA[cat];
+            modal.style.display = "flex";
+        };
+    }
+
+    if (btnFechar) {
+        btnFechar.onclick = () => modal.style.display = "none";
+    }
+
+    // Fechar ao clicar fora do modal
+    window.onclick = (event) => {
+        if (event.target == modal) modal.style.display = "none";
+    };
+});
+
+
+
 document.addEventListener("DOMContentLoaded", carregar);
