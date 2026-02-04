@@ -71,6 +71,9 @@ function filtrarERenderizar() {
     const professorFiltro = document.getElementById("filtroProfessor").value;
 
     const dadosFiltrados = todosAgendamentos.filter(ag => {
+        // REGRA: Se for lead_frio, nunca mostra nesta tela de Admin
+        if (ag.status === "lead_frio") return false;
+
         const matchesBusca = ag.aluno_nome.toLowerCase().includes(termoBusca);
         const matchesStatus = statusFiltro === "todos" || ag.status === statusFiltro;
         const matchesProf = professorFiltro === "todos" || ag.professor_id === professorFiltro;
@@ -106,9 +109,15 @@ function renderizarTabelaAtribuicao(agendamentos, professores) {
                     `).join('')}
                 </select>
             </td>
-            <td>
-                <a href="detalhe.html?id=${ag.id}" class="btn btn--secundario" style="width:100%; justify-content:center;">Ver Ficha</a>
-            </td>
+           <td>
+    <div style="display: flex; gap: 8px;">
+        <a href="detalhe.html?id=${ag.id}" class="btn btn--secundario" style="flex:1; justify-content:center;">Ficha</a>
+        <button class="btn btn-lead-frio" data-id="${ag.id}" title="Marcar como Lead Frio" 
+                style="background: #eceff1; color: #38a1d6; border: 1px solid #cfd8dc; padding: 0 10px; border-radius: 14px; cursor: pointer;">
+            <span class="material-symbols-outlined" style="vertical-align: middle;">ac_unit</span>
+        </button>
+    </div>
+</td>
         </tr>
     `).join('');
 }
@@ -126,3 +135,26 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("btnAtualizar")?.addEventListener("click", inicializarPainel);
 });
 
+async function marcarComoLeadFrio(id) {
+    if (!confirm("O aluno desistiu? Ele será movido para a lista de Agendamentos como 'Lead Frio'.")) return;
+
+    const { error } = await supabase
+        .from("agendamentos")
+        .update({ status: "lead_frio" })
+        .eq("id", id);
+
+    if (error) {
+        alert("Erro ao atualizar: " + error.message);
+    } else {
+        // Remove localmente para sumir da tela na hora
+        todosAgendamentos = todosAgendamentos.filter(a => a.id !== id);
+        filtrarERenderizar();
+        atualizarStats(todosAgendamentos);
+    }
+}
+
+// Event listener para o botão
+document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".btn-lead-frio");
+    if (btn) marcarComoLeadFrio(btn.dataset.id);
+});

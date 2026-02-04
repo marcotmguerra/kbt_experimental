@@ -123,6 +123,7 @@ function filtrarERenderizar() {
   const mes = document.getElementById("filtroMes").value;
   const coachId = document.getElementById("filtroCoach").value;
   const matricula = document.getElementById("filtroMatricula").value;
+  const statusFiltro = document.getElementById("filtroStatus").value; // Pegar o valor aqui
 
   dadosFiltradosParaExportar = todosAgendamentos.filter(item => {
     const matchesBusca = item.aluno_nome?.toLowerCase().includes(busca);
@@ -130,11 +131,17 @@ function filtrarERenderizar() {
     const matchesMes = mes === "todos" || mesAula === mes;
     const matchesCoach = coachId === "todos" || item.professor_id === coachId;
     
+    // Lógica de Status para a Agenda
+    let matchesStatus = true;
+    if (statusFiltro === "ativos") matchesStatus = item.status !== "lead_frio";
+    else if (statusFiltro === "lead_frio") matchesStatus = item.status === "lead_frio";
+    // se for "todos", matchesStatus continua true
+
     let matchesMatricula = true;
     if (matricula === "sim") matchesMatricula = item.matriculado === true;
     if (matricula === "nao") matchesMatricula = item.matriculado === false;
 
-    return matchesBusca && matchesMes && matchesCoach && matchesMatricula;
+    return matchesBusca && matchesMes && matchesCoach && matchesMatricula && matchesStatus;
   });
 
   if (dadosFiltradosParaExportar.length === 0) {
@@ -189,3 +196,4 @@ document.getElementById("filtroMes")?.addEventListener("change", filtrarERenderi
 document.getElementById("filtroCoach")?.addEventListener("change", filtrarERenderizar);
 document.getElementById("filtroMatricula")?.addEventListener("change", filtrarERenderizar);
 document.getElementById("btnExportar")?.addEventListener("click", exportarCSV);
+document.getElementById("filtroStatus")?.addEventListener("change", filtrarERenderizar);
