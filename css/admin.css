@@ -95,7 +95,14 @@ body{ background: var(--bg-claro); color: var(--texto); font-family: Inter, syst
 @media (min-width: 900px){ .stats{ grid-template-columns:1fr 1fr 1fr; } }
 
 .stat-card{ background:var(--card); border:1px solid var(--borda); border-radius:16px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,.04); }
-.stat-card__topo{ display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.stat-card__topo{
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 12px; /* distância entre os itens */
+  margin-bottom: 10px;
+}
+
 .stat-card__label{ margin:0; font-size:13px; color:var(--texto-fraco); font-weight:800; }
 .stat-card__icone{ color:var(--primario); background:rgba(19,127,236,.12); padding:8px; border-radius:12px; }
 .stat-card__valor{ display:flex; align-items:baseline; gap:10px; }
@@ -196,3 +203,72 @@ body{ background: var(--bg-claro); color: var(--texto); font-family: Inter, syst
   .tabela td:last-child { border: none; justify-content: center; }
   .stats { grid-template-columns: 1fr !important; }
 }
+
+
+/* ===============================
+   ADMIN → MOBILE FIRST
+   =============================== */
+@media (max-width: 768px) {
+
+  .sidebar {
+    display: none;
+  }
+
+  .app {
+    flex-direction: column;
+  }
+
+  .main {
+    width: 100%;
+  }
+
+  .topbar {
+    padding: 12px;
+  }
+
+  .busca {
+    width: 100%;
+  }
+
+}
+/* ===============================
+   BARRA DE AÇÃO FIXA (DESKTOP)
+   =============================== */
+
+.barra-acoes-fixa {
+  position: sticky;
+  bottom: 0;
+  background: var(--card);
+  border-top: 1px solid var(--borda);
+  padding: 12px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  z-index: 50;
+}
+
+/* Adicione ao final do seu admin.css */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Ajuste para os botões não ficarem colados no mobile */
+@media (max-width: 768px) {
+  .secao-acoes {
+    display: flex;
+    gap: 8px;
+  }
+  .secao-acoes .btn {
+    flex: 1;
+    padding: 10px 5px;
+    font-size: 12px;
+  }
+}
+

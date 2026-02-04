@@ -105,7 +105,7 @@
         </div>
 
         <div class="secao-topo">
-          <h3 class="secao-titulo">Novas inscrições/solicitações</h3> <!--Verificar o nome-->
+          <h3 class="secao-titulo">Novas inscrições</h3> <!--Verificar o nome-->
 
           <div class="secao-acoes">
             <label class="filtro">
@@ -126,10 +126,14 @@
               </select>
             </label>
 
-            <button id="btnAtualizar" class="btn btn--primario" type="button">
-              <i data-lucide="calendar-sync"></i><span>Atualizar</span>
-              
             </button>
+             <button id="btnSalvarTudo" class="btn btn--primario">
+    <i data-lucide="save"></i> Salvar alterações
+  </button>
+            
+            
+ 
+
           </div>
         </div>
 
@@ -165,10 +169,8 @@
           </footer>
         </section>
 
-        <div class="barra-acoes">
-          <button id="btnDescartar" class="btn btn--secundario" type="button">Descartar alterações</button>
-          <button id="btnSalvarTudo" class="btn btn--primario" type="button">Salvar atribuições</button>
-        </div>
+        
+
 
         <p id="msgAdmin" class="mensagem" hidden></p>
       </section>
@@ -189,6 +191,35 @@
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('../sw.js');
   }
+</script>
+
+
+<nav class="nav-mobile">
+  <a href="admin.html" class="nav-mobile__item nav-mobile__item--ativo">
+    <i data-lucide="layout-dashboard"></i>
+    <span>Painel</span>
+  </a>
+
+  <a href="agendamentos.html" class="nav-mobile__item">
+    <i data-lucide="calendar"></i>
+    <span>Agenda</span>
+  </a>
+
+  <a href="admin-coachs.html" class="nav-mobile__item">
+    <i data-lucide="users"></i>
+    <span>Coaches</span>
+  </a>
+
+  <a href="relatorio.html" class="nav-mobile__item">
+    <i data-lucide="chart-line"></i>
+    <span>Relatórios</span>
+  </a>
+</nav>
+
+<script src="../js/mobile-ui.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
 </script>
 
 </body>

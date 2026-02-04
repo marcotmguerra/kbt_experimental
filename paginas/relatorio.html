@@ -141,5 +141,36 @@
     navigator.serviceWorker.register('../sw.js');
   }
 </script>
+
+<script src="../js/mobile-ui.js"></script>
+
+<nav class="nav-mobile">
+  <a href="admin.html" class="nav-mobile__item nav-mobile__item--ativo">
+    <i data-lucide="layout-dashboard"></i>
+    <span>Painel</span>
+  </a>
+
+  <a href="agendamentos.html" class="nav-mobile__item">
+    <i data-lucide="calendar"></i>
+    <span>Agenda</span>
+  </a>
+
+  <a href="admin-coachs.html" class="nav-mobile__item">
+    <i data-lucide="users"></i>
+    <span>Coaches</span>
+  </a>
+
+  <a href="relatorio.html" class="nav-mobile__item">
+    <i data-lucide="chart-line"></i>
+    <span>Relatórios</span>
+  </a>
+</nav>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+</script>
+
+
 </body>
 </html>

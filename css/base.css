@@ -311,3 +311,82 @@ select:focus {
   margin: 0; /* Remove margens extras do label padrão */
   cursor: pointer;
 }
+
+
+/* ===============================
+   MENU MOBILE PADRÃO (GLOBAL)
+   =============================== */
+
+.nav-mobile {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  height: 64px;
+  background: var(--card);
+  border-top: 1px solid var(--borda);
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+
+  z-index: 999;
+}
+
+.nav-mobile__item {
+  flex: 1;
+  text-decoration: none;
+  color: var(--texto-fraco);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 10px;
+  font-weight: 900;
+  gap: 4px;
+}
+
+.nav-mobile__item i {
+  width: 20px;
+  height: 20px;
+  color: var(--texto-fraco);
+}
+
+.nav-mobile__item--ativo,
+.nav-mobile__item--ativo i {
+  color: var(--primario);
+  transform: translateY(-2px);
+}
+
+/* Espaço para não esconder conteúdo */
+body.com-menu-mobile {
+  padding-bottom: 72px;
+}
+
+/* Desktop NÃO mostra menu mobile */
+@media (min-width: 769px) {
+  .nav-mobile {
+    display: none;
+  }
+}
+
+/* Inspirado no home.css */
+.stat-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px; /* Bordas bem arredondadas como no iOS */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.stat-card:active {
+  transform: scale(0.96); /* Feedback de clique de app */
+}

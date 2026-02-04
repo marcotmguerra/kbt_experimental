@@ -125,3 +125,4 @@ document.addEventListener("DOMContentLoaded", () => {
     // Botão atualizar
     document.getElementById("btnAtualizar")?.addEventListener("click", inicializarPainel);
 });
+
