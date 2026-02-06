@@ -179,7 +179,7 @@ function mostrarPainelProfessor(id, ag) {
 
 function mostrarPainelAdmin(id, ag) {
     document.getElementById("secaoAdminVenda").style.display = "block";
-    document.getElementById("containerAdminAcoes").style.display = "flex";
+    document.getElementById("containerAdminAcoes").style.display = "block";
     document.getElementById("containerFeedbackAdmin").style.display = "block";
 
     const box = document.getElementById("leituraRelatorio");
@@ -209,7 +209,61 @@ function mostrarPainelAdmin(id, ag) {
 
     document.getElementById("btnConfirmar").onclick = () => supabase.from("agendamentos").update({ status: 'confirmado' }).eq("id", id).then(() => location.reload());
     document.getElementById("btnFaltou").onclick = () => supabase.from("agendamentos").update({ status: 'faltou' }).eq("id", id).then(() => location.reload());
+
+     // --- LÓGICA DOS BOTÕES DE STATUS ---
+    document.getElementById("btnConfirmar").onclick = () => 
+        supabase.from("agendamentos").update({ status: 'confirmado' }).eq("id", id).then(() => location.reload());
+    
+    document.getElementById("btnFaltou").onclick = () => 
+        supabase.from("agendamentos").update({ status: 'faltou' }).eq("id", id).then(() => location.reload());
+
+    // --- LÓGICA DOS CHECKBOXES (RECEPÇÃO E MATRICULADO) ---
+    const checkRecepcao = document.getElementById("checkRecepcao");
+    const checkMatriculado = document.getElementById("checkMatriculado");
+
+    // 1. Carrega o estado inicial (vindo do banco de dados)
+    // Nota: Certifique-se que essas colunas existem na sua tabela 'agendamentos' no Supabase
+    checkRecepcao.checked = ag.levou_recepcao || false;
+    checkMatriculado.checked = ag.matriculado || false;
+
+    // 2. Evento para salvar "Levou à recepção"
+    checkRecepcao.onchange = async () => {
+        const valor = checkRecepcao.checked;
+        const { error } = await supabase
+            .from("agendamentos")
+            .update({ levou_recepcao: valor })
+            .eq("id", id);
+        
+        if (error) {
+            showToast("Erro ao salvar recepção", "erro");
+            checkRecepcao.checked = !valor; // reverte se der erro
+        } else {
+            showToast(valor ? "Registrado: Levou à recepção" : "Registro removido");
+        }
+    };
+
+    // 3. Evento para salvar "Matriculado"
+    checkMatriculado.onchange = async () => {
+    const valor = checkMatriculado.checked; // Isso já retorna true ou false
+    
+    const { error } = await supabase
+        .from("agendamentos")
+        .update({ 
+            matriculado: valor 
+            // Removido a linha do status para não dar conflito com as regras do banco
+        })
+        .eq("id", id);
+    
+    if (error) {
+        console.error("Erro completo do Supabase:", error);
+        showToast("Erro ao salvar matrícula", "erro");
+        checkMatriculado.checked = !valor; 
+    } else {
+        showToast(valor ? "Aluno Matriculado!" : "Matrícula desmarcada");
+    }
+};
 }
+
 
 // Função auxiliar para converter imagem em Base64 (garante que apareça no PDF)
 function imagemParaBase64(url) {
