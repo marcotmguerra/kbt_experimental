@@ -127,7 +127,7 @@ function processarStats(lista) {
             }
 
             // Origem
-            const ori = buscarNoForm(a.form_raw, ['conheceu', 'origem', 'indicou', 'viu', 'onde']);
+            const ori = buscarNoForm(a.form_raw, ['conheceu']);
             if (ori) {
                 const o = ori.toString().trim();
                 s.origem[o] = (s.origem[o] || 0) + 1;
