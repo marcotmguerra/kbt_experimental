@@ -21,7 +21,7 @@ async function salvarTudo() {
       const agendamentoId = sel.dataset.id;
       const professorId = sel.value || null;
       
-      // Lógica de status: se tem professor é 'atribuido', se não é 'pendente'
+      // Lógica de status: se tem professor é 'atribuido', se não é 'c'
       // Nota: Buscamos o status atual na linha para não sobrescrever 'confirmado' ou 'faltou'
       const statusAtual = sel.closest('tr').querySelector('.status-pill').textContent.trim();
       let novoStatus = statusAtual;

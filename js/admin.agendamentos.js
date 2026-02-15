@@ -149,7 +149,7 @@ function filtrarERenderizar() {
     return;
   }
 
-  lista.innerHTML = dadosFiltradosParaExportar.map(ag => `
+ lista.innerHTML = dadosFiltradosParaExportar.map(ag => `
     <tr>
       <td>${formatarDataBR(ag.data_aula)}</td>
       <td>
@@ -163,10 +163,20 @@ function filtrarERenderizar() {
       <td>${ag.matriculado ? '✅ Sim' : '❌ Não'}</td>
       <td><small>${ag.tipo_aula ?? 'Experimental'}</small></td>
       <td class="tabela__acao">
-        <a href="detalhe.html?id=${ag.id}" class="icon-btn"><span class="material-symbols-outlined">visibility</span></a>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <a href="detalhe.html?id=${ag.id}" class="icon-btn" title="Ver Detalhes">
+                <span class="material-symbols-outlined">visibility</span>
+            </a>
+
+            ${ag.status === 'lead_frio' ? `
+                <button onclick="reativarAluno('${ag.id}')" class="icon-btn" title="Reativar Aluno" style="color: #10b981; border:none; background:none; cursor:pointer; padding:0;">
+                    <span class="material-symbols-outlined">settings_backup_restore</span>
+                </button>
+            ` : ''}
+        </div>
       </td>
     </tr>
-  `).join("");
+`).join("");
 }
 
 function exportarCSV() {
@@ -189,6 +199,31 @@ function exportarCSV() {
   link.click();
   document.body.removeChild(link);
 }
+
+window.reativarAluno = async function(id) {
+    if (!confirm("Este aluno voltará para a lista de agendamentos pendentes. Confirmar?")) return;
+
+    const { error } = await supabase
+        .from("agendamentos")
+        .update({ status: "pendente" })
+        .eq("id", id);
+
+    if (error) {
+        alert("Erro ao reativar: " + error.message);
+    } else {
+        // Feedback visual imediato
+        showToast("Aluno reativado!");
+        
+        // Se estiver na tela de listagem, precisamos atualizar a lista local
+        if (typeof todosAgendamentos !== 'undefined') {
+            const index = todosAgendamentos.findIndex(a => a.id === id);
+            if (index !== -1) todosAgendamentos[index].status = 'pendente';
+            filtrarERenderizar(); // Chama sua função que reconstrói a tabela
+        } else {
+            location.reload(); // Fallback caso a variável global não exista
+        }
+    }
+};
 
 document.addEventListener("DOMContentLoaded", inicializar);
 document.getElementById("buscaAgenda")?.addEventListener("input", filtrarERenderizar);
