@@ -465,9 +465,26 @@ function faixaPermiteIdade(faixa, idade) {
 // --- CONFIGURAÇÃO DA GRADE DE HORÁRIOS UNIDADE CASTELO ---
 const GRADE_HORARIOS = {
     kids: {
-        seg_qua: ["08:30 (Andantes-3a)", "09:00 (7-13a)", "17:00 (7-13a)", "18:15 (7-10a)", "19:15 (7-13a)"],
-        ter_qui: ["08:15 (4-6a)", "09:00 (7-13a)", "17:00 (7-13a)", "18:15 (4-6a)", "19:15 (7-13a)"],
-        sex:     ["09:00 (7-13a)", "17:00 (7-13a)", "18:15 (7-10a)", "19:15 (7-13a)"],
+        seg_qua: [
+            "08:30 (Andantes-3a)", 
+            "09:00 (7-10a)", 
+            "17:00 (7-10a)", 
+            "17:00 (11-13a)", 
+            "18:00 (11-13a)", 
+            "18:15 (7-10a)", 
+            "19:15 (7-10a)", 
+            "19:15 (11-13a)"  
+        ],
+        ter_qui: [
+            "08:15 (4-6a)", 
+            "09:00 (7-10a)", 
+            "17:00 (7-10a)", 
+            "17:00 (11-13a)", 
+            "18:15 (4-6a)", 
+            "19:00 (11-13a)", 
+            "19:15 (7-10a)"
+        ],
+        sex:     ["09:00 (7-10a)", "17:00 (7-10a)", "18:15 (7-10a)", "19:15 (7-13a)"],
         sabado:  ["08:00 (Andantes-3a)", "08:30 (4-6a)", "09:15 (7-10a)", "10:15 (11-13a)"]
     },
     adulto: {
@@ -542,7 +559,7 @@ if (chaveNascimento && dadosForm[chaveNascimento]) {
             else if (diaSemana === 5) opcoes = GRADE_HORARIOS.kids.sex;
             else if (diaSemana === 6) opcoes = GRADE_HORARIOS.kids.sabado;
 
-            // 🔒 FILTRA SOMENTE A FAIXA ETÁRIA CORRETA
+            // FILTRA SOMENTE A FAIXA ETÁRIA CORRETA
             if (categoriaAluno === 'kids') {
     opcoes = opcoes.filter(h => {
         const faixa = h.match(/\((.*?)\)/)?.[1]; // pega "7-13a"
