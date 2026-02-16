@@ -126,8 +126,9 @@ window.arquivarAluno = async (id) => {
 
 window.enviarMensagem = async (id, tipo, telefone, nome) => {
     const msg = tipo === 'avaliacao' 
-        ? `Olá ${nome}! Aqui é do CrossFit Kabuto. Como foi sua experiência na aula experimental? Sua opinião é muito importante para nós!` 
-        : `Oi ${nome}, tudo bem? Poderia nos dar um feedback mais detalhado respondendo esse link rápido? Isso nos ajuda a melhorar seu treino!`;
+        ? `Olá, ${nome}! ` 
+        : `Vou te enviar o link do nosso questionário pós-aula experimental. São apenas 5 perguntas. Assim que responder, me avise, por favor. Obrigada! 
+        https://docs.google.com/forms/d/e/1FAIpQLSckbgDewZ0R9ec5L_zYcc7sppJCQ65gV-IwBVdI0pm0xSBOcg/viewform?usp=header`;
     
     window.open(linkWhatsApp(telefone, msg), '_blank');
     
